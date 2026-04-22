@@ -1,0 +1,27 @@
+[
+  {
+    "id": "name",
+    "label": "Name",
+    "isVisible": true
+  },
+  {
+    "id": "phone",
+    "label": "Phone",
+    "isVisible": true
+  },
+  {
+    "id": "email",
+    "label": "Email",
+    "isVisible": true
+  },
+  {
+    "id": "tag",
+    "label": "Tag",
+    "isVisible": true
+  },
+  {
+    "id": "createdAt",
+    "label": "Date",
+    "isVisible": true
+  }
+]

@@ -1,0 +1,24 @@
+[
+  {
+    "id": "lead_1776445123234",
+    "name": "Ali Hassan",
+    "email": "bdhdb@gmail.com",
+    "phone": "0393839929",
+    "tag": "Interested",
+    "createdAt": "2026-04-17"
+  },
+  {
+    "id": "lead_1776450209607",
+    "name": "Kashif",
+    "email": "Juttbrand@gmail.com",
+    "phone": "03458760960",
+    "tag": "Interested",
+    "createdAt": "2026-04-17",
+    "details": {
+      "product": "Black T-Shirt",
+      "qty": "1",
+      "price": "PKR 1,800",
+      "notes": ""
+    }
+  }
+]

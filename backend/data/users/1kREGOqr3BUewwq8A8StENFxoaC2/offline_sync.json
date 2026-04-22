@@ -1,0 +1,16 @@
+[
+  {
+    "id": "A573D6B199A866ADDDD2F484D7C20A6E",
+    "type": "message",
+    "data": {
+      "id": "A573D6B199A866ADDDD2F484D7C20A6E",
+      "type": "text",
+      "text": "Hi",
+      "mediaData": null,
+      "sender": "7190261829710@lid",
+      "timestamp": "2026-04-22T16:18:45.442Z",
+      "fromMe": false
+    },
+    "timestamp": "2026-04-22T16:18:45.443Z"
+  }
+]

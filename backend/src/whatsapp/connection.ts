@@ -1,0 +1,217 @@
+import makeWASocket, { 
+    useMultiFileAuthState, 
+    DisconnectReason,
+    fetchLatestBaileysVersion,
+    WASocket,
+    proto
+} from '@whiskeysockets/baileys';
+import { Boom } from '@hapi/boom';
+import pino from 'pino';
+import { Server } from 'socket.io';
+import path from 'path';
+import fs from 'fs';
+import { fileURLToPath } from 'url';
+import { processIncomingMessage } from './messageHandler.js';
+import { AnalyticsService } from '../services/analyticsService.js';
+import { Server } from 'socket.io';
+
+// ESM __dirname shim
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// We store sessions per user
+const sessionsDir = path.join(__dirname, '../../sessions');
+if (!fs.existsSync(sessionsDir)) {
+    fs.mkdirSync(sessionsDir, { recursive: true });
+}
+
+// Simple in-memory message store (replaces makeInMemoryStore which was removed in Baileys v7)
+export type MessageStore = {
+    [jid: string]: proto.IWebMessageInfo[]
+};
+
+export type ChatStore = {
+    [jid: string]: {
+        id: string;
+        name?: string;
+        lastMessage?: string;
+        lastMessageTime?: string;
+        unreadCount: number;
+    }
+};
+
+export const messageStores: { [userId: string]: MessageStore } = {};
+export const chatStores: { [userId: string]: ChatStore } = {};
+export const activeSockets: { [userId: string]: WASocket } = {};
+const activeSessions: { [userId: string]: boolean } = {};
+
+export const initializeWhatsApp = async (userId: string, io: Server) => {
+    if (activeSessions[userId]) {
+        console.log(`WhatsApp session for ${userId} is already active.`);
+        io.to(`user_${userId}`).emit('whatsapp_ready', { userId });
+        return;
+    }
+
+    const sessionPath = path.join(sessionsDir, `session_${userId}`);
+    
+    const { state, saveCreds } = await useMultiFileAuthState(sessionPath);
+    const { version, isLatest } = await fetchLatestBaileysVersion();
+    
+    console.log(`[${userId}] Using WA v${version.join('.')}, isLatest: ${isLatest}`);
+
+    // Initialize our own stores for this user
+    messageStores[userId] = {};
+    chatStores[userId] = {};
+
+    const sock = makeWASocket({
+        version,
+        logger: pino({ level: 'silent' }) as any,
+        printQRInTerminal: false,
+        auth: state,
+        generateHighQualityLinkPreview: true,
+        syncFullHistory: false,
+        // Provide getMessage from our manual store for retry support
+        getMessage: async (key) => {
+            const jid = key.remoteJid!;
+            const msgs = messageStores[userId]?.[jid] || [];
+            return msgs.find(m => m.key.id === key.id)?.message || undefined;
+        }
+    });
+
+    activeSockets[userId] = sock;
+    sock.ev.on('creds.update', saveCreds);
+
+    // Initial history sync
+    sock.ev.on('messaging-history.set', ({ chats, messages }) => {
+        console.log(`[${userId}] 📚 Initial history received: ${chats?.length} chats, ${messages?.length} messages`);
+        
+        if (chats) {
+            for (const chat of chats) {
+                if (!chatStores[userId][chat.id]) {
+                    chatStores[userId][chat.id] = {
+                        id: chat.id,
+                        name: chat.name || undefined,
+                        unreadCount: chat.unreadCount || 0,
+                        lastMessage: undefined,
+                        lastMessageTime: undefined
+                    };
+                }
+            }
+        }
+
+        if (messages) {
+            for (const msg of messages) {
+                const jid = msg.key.remoteJid!;
+                if (!jid) continue;
+
+                if (!messageStores[userId][jid]) messageStores[userId][jid] = [];
+                messageStores[userId][jid].push(msg);
+                
+                // Update last message in chatStore
+                if (chatStores[userId][jid]) {
+                    const content = msg.message?.conversation || msg.message?.extendedTextMessage?.text || (msg.message?.imageMessage ? 'photo' : '');
+                    if (content) {
+                        const msgTime = new Date((msg.messageTimestamp as number) * 1000).toISOString();
+                        if (!chatStores[userId][jid].lastMessageTime || msgTime > chatStores[userId][jid].lastMessageTime!) {
+                            chatStores[userId][jid].lastMessage = content;
+                            chatStores[userId][jid].lastMessageTime = msgTime;
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    sock.ev.on('chats.upsert', (newChats) => {
+        for (const chat of newChats) {
+            if (!chatStores[userId][chat.id]) {
+                chatStores[userId][chat.id] = {
+                    id: chat.id,
+                    name: chat.name || undefined,
+                    unreadCount: chat.unreadCount || 0,
+                    lastMessage: undefined,
+                    lastMessageTime: undefined
+                };
+            }
+        }
+    });
+
+    sock.ev.on('chats.update', (updates) => {
+        for (const update of updates) {
+            if (update.id && chatStores[userId][update.id]) {
+                const existing = chatStores[userId][update.id];
+                chatStores[userId][update.id] = {
+                    ...existing,
+                    name: update.name || existing.name,
+                    unreadCount: update.unreadCount !== undefined ? update.unreadCount : existing.unreadCount
+                };
+            }
+        }
+    });
+
+    // Manually maintain a rolling 30-message history per chat
+    sock.ev.on('messages.upsert', async (m) => {
+        if (!messageStores[userId]) messageStores[userId] = {};
+        
+        for (const msg of m.messages) {
+            const jid = msg.key.remoteJid!;
+            if (!messageStores[userId][jid]) {
+                messageStores[userId][jid] = [];
+            }
+            // Rolling 30-message window
+            messageStores[userId][jid].push(msg);
+            if (messageStores[userId][jid].length > 30) {
+                messageStores[userId][jid].shift();
+            }
+
+            // Update chat list info
+            if (!chatStores[userId][jid]) {
+                chatStores[userId][jid] = { id: jid, unreadCount: 0 };
+            }
+            const content = msg.message?.conversation || msg.message?.extendedTextMessage?.text || (msg.message?.imageMessage ? 'photo' : '');
+            if (content) {
+                chatStores[userId][jid].lastMessage = content;
+                chatStores[userId][jid].lastMessageTime = new Date().toISOString();
+            }
+
+            // Process only incoming messages
+            if (m.type === 'notify' && !msg.key.fromMe) {
+                console.log(`[${userId}] Received message from ${msg.key.remoteJid}`);
+                chatStores[userId][jid].unreadCount += 1;
+                
+                // Track analytics
+                await AnalyticsService.trackEvent(userId, 'messages');
+                await processIncomingMessage(userId, msg, sock, io);
+            }
+        }
+    });
+
+    sock.ev.on('connection.update', (update) => {
+        const { connection, lastDisconnect, qr } = update;
+        
+        if (qr) {
+            console.log(`[${userId}] QR ready — emitting to frontend`);
+            io.to(`user_${userId}`).emit('whatsapp_qr', { qr });
+        }
+
+        if (connection === 'close') {
+            const shouldReconnect = (lastDisconnect?.error as Boom)?.output?.statusCode !== DisconnectReason.loggedOut;
+            console.log(`[${userId}] Connection closed. Reconnecting: ${shouldReconnect}`);
+            
+            activeSessions[userId] = false;
+            delete activeSockets[userId];
+            
+            if (shouldReconnect) {
+                setTimeout(() => initializeWhatsApp(userId, io), 3000);
+            } else {
+                console.log(`[${userId}] Logged out. Deleting session.`);
+                fs.rmSync(sessionPath, { recursive: true, force: true });
+                io.to(`user_${userId}`).emit('whatsapp_disconnected');
+            }
+        } else if (connection === 'open') {
+            console.log(`[${userId}] Connected! 24/7 Engine active.`);
+            activeSessions[userId] = true;
+            io.to(`user_${userId}`).emit('whatsapp_ready', { userId });
+        }
+    });
+};

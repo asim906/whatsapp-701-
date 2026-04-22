@@ -1,0 +1,16 @@
+[
+  {
+    "id": "2ABA781A129A3A316A3B",
+    "type": "message",
+    "data": {
+      "id": "2ABA781A129A3A316A3B",
+      "type": "text",
+      "text": "Ho",
+      "mediaData": null,
+      "sender": "7190261829710@lid",
+      "timestamp": "2026-04-20T17:32:03.144Z",
+      "fromMe": false
+    },
+    "timestamp": "2026-04-20T17:32:03.145Z"
+  }
+]

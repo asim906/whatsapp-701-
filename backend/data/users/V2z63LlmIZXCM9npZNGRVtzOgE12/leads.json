@@ -1,0 +1,44 @@
+[
+  {
+    "id": "lead_1776709578118",
+    "name": "Abdullah Cheema",
+    "email": "hdhdhd@email.com",
+    "phone": "83838482",
+    "tag": "Interested",
+    "createdAt": "2026-04-20",
+    "details": {
+      "product": "...",
+      "qty": "...",
+      "price": "...",
+      "notes": "..."
+    }
+  },
+  {
+    "id": "lead_1776796411955",
+    "name": "Customer",
+    "phone": "7190261829710@lid",
+    "email": "Unknown",
+    "tag": "Order",
+    "createdAt": "2026-04-21",
+    "details": {
+      "orderId": "order_1776796411949",
+      "product": "red shoes",
+      "qty": 2,
+      "total": 10000
+    }
+  },
+  {
+    "id": "lead_1776797513959",
+    "name": "Asim",
+    "phone": "7190261829710@lid",
+    "email": "Unknown",
+    "tag": "Order",
+    "createdAt": "2026-04-21",
+    "details": {
+      "orderId": "order_1776797513947",
+      "product": "sports shoes",
+      "qty": 1,
+      "total": 10000
+    }
+  }
+]

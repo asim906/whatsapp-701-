@@ -1,0 +1,1313 @@
+[
+  {
+    "id": "2A51A406962E561EDF22",
+    "type": "message",
+    "data": {
+      "id": "2A51A406962E561EDF22",
+      "type": "text",
+      "text": "🎙️ [VOICE]:  I need a shoes",
+      "sender": "7190261829710@lid",
+      "timestamp": "2026-04-18T12:47:26.862Z",
+      "fromMe": false
+    },
+    "timestamp": "2026-04-18T12:47:26.865Z"
+  },
+  {
+    "id": "2A03B2F1331DC08241FC",
+    "type": "message",
+    "data": {
+      "id": "2A03B2F1331DC08241FC",
+      "type": "text",
+      "text": "I need shoes",
+      "sender": "7190261829710@lid",
+      "timestamp": "2026-04-18T12:48:44.642Z",
+      "fromMe": false
+    },
+    "timestamp": "2026-04-18T12:48:44.655Z"
+  },
+  {
+    "id": "2A388F988CB04C47BE54",
+    "type": "message",
+    "data": {
+      "id": "2A388F988CB04C47BE54",
+      "type": "text",
+      "text": "🎙️ [VOICE]:  My name is Asim. What's your name?",
+      "sender": "7190261829710@lid",
+      "timestamp": "2026-04-18T12:49:51.687Z",
+      "fromMe": false
+    },
+    "timestamp": "2026-04-18T12:49:51.688Z"
+  },
+  {
+    "id": "2AA666F78016636292B3",
+    "type": "message",
+    "data": {
+      "id": "2AA666F78016636292B3",
+      "type": "text",
+      "text": "🎙️ [VOICE]:  کیا حال ہے تمہارا تو تمہارے پاس کیا کیا چیزیں ہیں لبالا مجھے یہ تو بتاؤ ہندراو",
+      "sender": "7190261829710@lid",
+      "timestamp": "2026-04-18T12:50:26.782Z",
+      "fromMe": false
+    },
+    "timestamp": "2026-04-18T12:50:26.783Z"
+  },
+  {
+    "id": "2A3365993BC11F4E7C79",
+    "type": "message",
+    "data": {
+      "id": "2A3365993BC11F4E7C79",
+      "type": "text",
+      "text": "Hello",
+      "sender": "7190261829710@lid",
+      "timestamp": "2026-04-18T12:52:08.397Z",
+      "fromMe": false
+    },
+    "timestamp": "2026-04-18T12:52:08.399Z"
+  },
+  {
+    "id": "2AD556A83961C89F0AFF",
+    "type": "message",
+    "data": {
+      "id": "2AD556A83961C89F0AFF",
+      "type": "text",
+      "text": "Hey",
+      "mediaData": null,
+      "sender": "7190261829710@lid",
+      "timestamp": "2026-04-18T12:58:48.924Z",
+      "fromMe": false
+    },
+    "timestamp": "2026-04-18T12:58:48.928Z"
+  },
+  {
+    "id": "2A0211AD53E48EF3F591",
+    "type": "message",
+    "data": {
+      "id": "2A0211AD53E48EF3F591",
+      "type": "text",
+      "text": "🎙️ [VOICE MESSAGE RECEIVED] (Failed to transcribe)",
+      "mediaData": null,
+      "sender": "7190261829710@lid",
+      "timestamp": "2026-04-18T12:58:57.352Z",
+      "fromMe": false
+    },
+    "timestamp": "2026-04-18T12:58:57.353Z"
+  },
+  {
+    "id": "2A73809724D6010AD9CA",
+    "type": "message",
+    "data": {
+      "id": "2A73809724D6010AD9CA",
+      "type": "text",
+      "text": "Hi",
+      "mediaData": null,
+      "sender": "7190261829710@lid",
+      "timestamp": "2026-04-18T13:00:39.442Z",
+      "fromMe": false
+    },
+    "timestamp": "2026-04-18T13:00:39.444Z"
+  },
+  {
+    "id": "2A3778F7FE5B852DD5BB",
+    "type": "message",
+    "data": {
+      "id": "2A3778F7FE5B852DD5BB",
+      "type": "text",
+      "text": "Hey",
+      "mediaData": null,
+      "sender": "7190261829710@lid",
+      "timestamp": "2026-04-18T13:07:28.474Z",
+      "fromMe": false
+    },
+    "timestamp": "2026-04-18T13:07:28.476Z"
+  },
+  {
+    "id": "2A2CC64FA0D798284EE8",
+    "type": "message",
+    "data": {
+      "id": "2A2CC64FA0D798284EE8",
+      "type": "text",
+      "text": "🎙️ [VOICE MESSAGE RECEIVED] (Failed to transcribe)",
+      "mediaData": null,
+      "sender": "7190261829710@lid",
+      "timestamp": "2026-04-18T13:08:01.598Z",
+      "fromMe": false
+    },
+    "timestamp": "2026-04-18T13:08:01.600Z"
+  },
+  {
+    "id": "2AB5B47D388FDB60CA52",
+    "type": "message",
+    "data": {
+      "id": "2AB5B47D388FDB60CA52",
+      "type": "text",
+      "text": "🎙️ [VOICE MESSAGE RECEIVED] (Failed to transcribe)",
+      "mediaData": null,
+      "sender": "7190261829710@lid",
+      "timestamp": "2026-04-18T13:08:08.958Z",
+      "fromMe": false
+    },
+    "timestamp": "2026-04-18T13:08:08.959Z"
+  },
+  {
+    "id": "2ADFB896C186DFCD457E",
+    "type": "message",
+    "data": {
+      "id": "2ADFB896C186DFCD457E",
+      "type": "text",
+      "text": "🎙️ [VOICE]:  Can you hear me? Can you hear me? Please let me confirm.",
+      "mediaData": null,
+      "sender": "7190261829710@lid",
+      "timestamp": "2026-04-18T13:10:03.187Z",
+      "fromMe": false
+    },
+    "timestamp": "2026-04-18T13:10:03.191Z"
+  },
+  {
+    "id": "2A1A3A1D23F78CC7513D",
+    "type": "message",
+    "data": {
+      "id": "2A1A3A1D23F78CC7513D",
+      "type": "text",
+      "text": "🎙️ [VOICE]:  Hi Nida Shoes",
+      "mediaData": null,
+      "sender": "7190261829710@lid",
+      "timestamp": "2026-04-18T13:10:45.636Z",
+      "fromMe": false
+    },
+    "timestamp": "2026-04-18T13:10:45.637Z"
+  },
+  {
+    "id": "2A2496DBD4C3A81FCC28",
+    "type": "message",
+    "data": {
+      "id": "2A2496DBD4C3A81FCC28",
+      "type": "text",
+      "text": "🎙️ [VOICE]:  آپ کے پاس کون کون سی شوز کی ریائٹی پڑھی ہے؟ اس شوز کا کون کون سا موڈل ہے؟ آپ مجھے بتا سکتے ہیں؟ یہ مجھے بتاؤ ہاں اردو میں بتانا ٹھیک ہے آپ کے پاس کیا کیا آویلیبل اس ٹائم ہے؟",
+      "mediaData": null,
+      "sender": "7190261829710@lid",
+      "timestamp": "2026-04-18T13:11:23.853Z",
+      "fromMe": false
+    },
+    "timestamp": "2026-04-18T13:11:23.855Z"
+  },
+  {
+    "id": "2A7E8BB26AB75B29C611",
+    "type": "message",
+    "data": {
+      "id": "2A7E8BB26AB75B29C611",
+      "type": "text",
+      "text": "🎙️ [VOICE]:  ரோமன் எங்கிலிஷ்மியை முதலாவது?",
+      "mediaData": null,
+      "sender": "7190261829710@lid",
+      "timestamp": "2026-04-18T13:11:43.401Z",
+      "fromMe": false
+    },
+    "timestamp": "2026-04-18T13:11:43.402Z"
+  },
+  {
+    "id": "2ABE8658103146C09FBF",
+    "type": "message",
+    "data": {
+      "id": "2ABE8658103146C09FBF",
+      "type": "text",
+      "text": "🎙️ [VOICE]:  Roman English",
+      "mediaData": null,
+      "sender": "7190261829710@lid",
+      "timestamp": "2026-04-18T13:11:56.675Z",
+      "fromMe": false
+    },
+    "timestamp": "2026-04-18T13:11:56.675Z"
+  },
+  {
+    "id": "2A1CD98D61225C8EC2BC",
+    "type": "message",
+    "data": {
+      "id": "2A1CD98D61225C8EC2BC",
+      "type": "text",
+      "text": "🎙️ [VOICE]:  जो है ना शूज चाहिए और एक वाच चाहिए कि आपको पास वेलेबल है",
+      "mediaData": null,
+      "sender": "7190261829710@lid",
+      "timestamp": "2026-04-18T13:12:16.787Z",
+      "fromMe": false
+    },
+    "timestamp": "2026-04-18T13:12:16.788Z"
+  },
+  {
+    "id": "2A73E4C5ECD2E70BADB8",
+    "type": "message",
+    "data": {
+      "id": "2A73E4C5ECD2E70BADB8",
+      "type": "text",
+      "text": "🎙️ [VOICE MESSAGE RECEIVED] (Failed to transcribe)",
+      "mediaData": null,
+      "sender": "7190261829710@lid",
+      "timestamp": "2026-04-18T13:12:46.162Z",
+      "fromMe": false
+    },
+    "timestamp": "2026-04-18T13:12:46.163Z"
+  },
+  {
+    "id": "2A6A36240B62D2C6AE0D",
+    "type": "message",
+    "data": {
+      "id": "2A6A36240B62D2C6AE0D",
+      "type": "text",
+      "text": "🎙️ [VOICE MESSAGE RECEIVED] (Failed to transcribe)",
+      "mediaData": null,
+      "sender": "7190261829710@lid",
+      "timestamp": "2026-04-18T13:16:55.842Z",
+      "fromMe": false
+    },
+    "timestamp": "2026-04-18T13:16:55.845Z"
+  },
+  {
+    "id": "2A01257C9C7E808EB85C",
+    "type": "message",
+    "data": {
+      "id": "2A01257C9C7E808EB85C",
+      "type": "text",
+      "text": "🎙️ [VOICE MESSAGE RECEIVED] (Failed to transcribe)",
+      "mediaData": null,
+      "sender": "7190261829710@lid",
+      "timestamp": "2026-04-18T13:17:04.668Z",
+      "fromMe": false
+    },
+    "timestamp": "2026-04-18T13:17:04.670Z"
+  },
+  {
+    "id": "2A79BE06978F9C7E3B43",
+    "type": "message",
+    "data": {
+      "id": "2A79BE06978F9C7E3B43",
+      "type": "text",
+      "text": "🎙️ [VOICE]:  I need a shoes. Please let me confirm available shoes.",
+      "mediaData": null,
+      "sender": "7190261829710@lid",
+      "timestamp": "2026-04-18T13:17:43.605Z",
+      "fromMe": false
+    },
+    "timestamp": "2026-04-18T13:17:43.606Z"
+  },
+  {
+    "id": "2A68DD3331878C719AF4",
+    "type": "message",
+    "data": {
+      "id": "2A68DD3331878C719AF4",
+      "type": "text",
+      "text": "🎙️ [VOICE]:  Great! I am happy now.",
+      "mediaData": null,
+      "sender": "7190261829710@lid",
+      "timestamp": "2026-04-18T13:18:07.760Z",
+      "fromMe": false
+    },
+    "timestamp": "2026-04-18T13:18:07.761Z"
+  },
+  {
+    "id": "2A187817D1E3DD41EEF5",
+    "type": "message",
+    "data": {
+      "id": "2A187817D1E3DD41EEF5",
+      "type": "text",
+      "text": "🎙️ [VOICE MESSAGE RECEIVED] (Failed to transcribe)",
+      "mediaData": null,
+      "sender": "7190261829710@lid",
+      "timestamp": "2026-04-18T13:18:21.973Z",
+      "fromMe": false
+    },
+    "timestamp": "2026-04-18T13:18:21.977Z"
+  },
+  {
+    "id": "2ABEB7A1B7E446C04F5E",
+    "type": "message",
+    "data": {
+      "id": "2ABEB7A1B7E446C04F5E",
+      "type": "text",
+      "text": "Fix the language-specific transcription issue in the WhatsApp AI voice message system.\n\nCurrently, the system behaves inconsistently based on language input:\n\n- When the user speaks in English, the system works correctly:\n  - Voice messages are successfully transcribed\n  - Responses are generated properly\n\n- However, when the user speaks in Urdu (or similar languages like Roman Urdu), the system frequently fails and shows \"Failed to transcribe\" errors.\n\nThis indicates a language-specific problem in the transcription pipeline.\n\nInvestigate and resolve this issue by focusing on:\n\n1. Language Handling:\n- Ensure the transcription engine properly supports Urdu and Roman Urdu\n- Detect the spoken language before transcription (auto language detection)\n- Route audio to the correct language model if needed\n\n2. Transcription Engine Optimization:\n- Improve accuracy and success rate for non-English languages\n- Ensure proper encoding and audio preprocessing for Urdu speech\n\n3. Error Reduction:\n- Reduce \"Failed to transcribe\" errors specifically for Urdu inputs\n- Apply retries or fallback mechanisms when Urdu transcription fails\n\n4. Consistent Behavior:\n- The system should perform equally well for Urdu and English\n- No language should have significantly higher failure rates\n\nThe goal is to make Urdu voice input as reliable and accurate as English, eliminating frequent transcription failures for non-English speech.",
+      "mediaData": null,
+      "sender": "7190261829710@lid",
+      "timestamp": "2026-04-18T13:19:44.212Z",
+      "fromMe": false
+    },
+    "timestamp": "2026-04-18T13:19:44.214Z"
+  },
+  {
+    "id": "2AB299B154C44FE41FCF",
+    "type": "message",
+    "data": {
+      "id": "2AB299B154C44FE41FCF",
+      "type": "text",
+      "text": "🎙️ [VOICE]:  اچھا مجھے نا شوز چاہیے کیا تمہارے پاس شوز اویلیبل ہیں مجھے یہ بتاؤ اگر نہیں ہے تو کب تک آ جائیں گے",
+      "mediaData": null,
+      "sender": "7190261829710@lid",
+      "timestamp": "2026-04-18T13:34:05.491Z",
+      "fromMe": false
+    },
+    "timestamp": "2026-04-18T13:34:05.497Z"
+  },
+  {
+    "id": "2A44408A009CCBFF8E52",
+    "type": "message",
+    "data": {
+      "id": "2A44408A009CCBFF8E52",
+      "type": "text",
+      "text": "🎙️ [VOICE]:  مجھے رومان انگریش میں بتاؤ رومان انگریش یا رومان اردو میں بتاؤ",
+      "mediaData": null,
+      "sender": "7190261829710@lid",
+      "timestamp": "2026-04-18T13:34:44.919Z",
+      "fromMe": false
+    },
+    "timestamp": "2026-04-18T13:34:44.922Z"
+  },
+  {
+    "id": "2A5C07B99F1FE24628F5",
+    "type": "message",
+    "data": {
+      "id": "2A5C07B99F1FE24628F5",
+      "type": "text",
+      "text": "🎙️ [VOICE]:  رومان انگلیش میں بات کرو رومان انگلیش میں",
+      "mediaData": null,
+      "sender": "7190261829710@lid",
+      "timestamp": "2026-04-18T13:35:07.963Z",
+      "fromMe": false
+    },
+    "timestamp": "2026-04-18T13:35:07.964Z"
+  },
+  {
+    "id": "2AAD3EBDF8E102F7FEB7",
+    "type": "message",
+    "data": {
+      "id": "2AAD3EBDF8E102F7FEB7",
+      "type": "text",
+      "text": "🎙️ [VOICE]:  آپ کے پاس کیا ہے میں کہہ رہا ہوں مجھے رومان انگلیش میں بتاؤ رومان انگلیش میں",
+      "mediaData": null,
+      "sender": "7190261829710@lid",
+      "timestamp": "2026-04-18T13:35:27.957Z",
+      "fromMe": false
+    },
+    "timestamp": "2026-04-18T13:35:27.958Z"
+  },
+  {
+    "id": "2A20A65DB31C8AFFFECF",
+    "type": "message",
+    "data": {
+      "id": "2A20A65DB31C8AFFFECF",
+      "type": "text",
+      "text": "🎙️ [VOICE]:  انگلیش نہیں استعمال کرنی رومان اردو استعمال کرنی ہاں رومان اردو یا رومان انگلیش میں جواب دوں نا جو میں انرسنڈ کر پاؤں",
+      "mediaData": null,
+      "sender": "7190261829710@lid",
+      "timestamp": "2026-04-18T13:36:00.276Z",
+      "fromMe": false
+    },
+    "timestamp": "2026-04-18T13:36:00.278Z"
+  },
+  {
+    "id": "2AACFCF0DC310A1ED33A",
+    "type": "message",
+    "data": {
+      "id": "2AACFCF0DC310A1ED33A",
+      "type": "text",
+      "text": "Kaya hall ha Asa",
+      "mediaData": null,
+      "sender": "7190261829710@lid",
+      "timestamp": "2026-04-18T13:36:58.610Z",
+      "fromMe": false
+    },
+    "timestamp": "2026-04-18T13:36:58.612Z"
+  },
+  {
+    "id": "2AF7B1666F5C40F349FB",
+    "type": "message",
+    "data": {
+      "id": "2AF7B1666F5C40F349FB",
+      "type": "text",
+      "text": "🎙️ [VOICE]:  اسی طرح تم نے بات کرنی ہے اسی طرح بلکل اسی طرح بات کرو میرے ساتھ",
+      "mediaData": null,
+      "sender": "7190261829710@lid",
+      "timestamp": "2026-04-18T13:37:20.310Z",
+      "fromMe": false
+    },
+    "timestamp": "2026-04-18T13:37:20.312Z"
+  },
+  {
+    "id": "2A5F0D8B68AAFDBC9C5A",
+    "type": "message",
+    "data": {
+      "id": "2A5F0D8B68AAFDBC9C5A",
+      "type": "text",
+      "text": "🎙️ [VOICE]:  ہاں اسی طرح بات کرو نا یہ تم کیا کہہ رہے ہو",
+      "mediaData": null,
+      "sender": "7190261829710@lid",
+      "timestamp": "2026-04-18T13:37:42.512Z",
+      "fromMe": false
+    },
+    "timestamp": "2026-04-18T13:37:42.513Z"
+  },
+  {
+    "id": "2A86E024DA0CB323B6F0",
+    "type": "message",
+    "data": {
+      "id": "2A86E024DA0CB323B6F0",
+      "type": "text",
+      "text": "Kaya hall ha",
+      "mediaData": null,
+      "sender": "7190261829710@lid",
+      "timestamp": "2026-04-18T13:38:04.307Z",
+      "fromMe": false
+    },
+    "timestamp": "2026-04-18T13:38:04.308Z"
+  },
+  {
+    "id": "2A4F0A3C1B74C70A1F50",
+    "type": "message",
+    "data": {
+      "id": "2A4F0A3C1B74C70A1F50",
+      "type": "text",
+      "text": "🎙️ [VOICE]:  I need a shoes, please let me confirm shoes available now",
+      "mediaData": null,
+      "sender": "7190261829710@lid",
+      "timestamp": "2026-04-18T13:38:24.492Z",
+      "fromMe": false
+    },
+    "timestamp": "2026-04-18T13:38:24.493Z"
+  },
+  {
+    "id": "2AEB88FCFD5DED1BE212",
+    "type": "message",
+    "data": {
+      "id": "2AEB88FCFD5DED1BE212",
+      "type": "text",
+      "text": "🎙️ [VOICE]:  کب تک شوز آ دیں گے یہ مجھے بتاؤ",
+      "mediaData": null,
+      "sender": "7190261829710@lid",
+      "timestamp": "2026-04-18T13:38:54.630Z",
+      "fromMe": false
+    },
+    "timestamp": "2026-04-18T13:38:54.632Z"
+  },
+  {
+    "id": "2AC67C53B9046C26BF1C",
+    "type": "message",
+    "data": {
+      "id": "2AC67C53B9046C26BF1C",
+      "type": "text",
+      "text": "🎙️ [VOICE]:  Românul îl dumnevoadă, cărui românul îl dumea.",
+      "mediaData": null,
+      "sender": "7190261829710@lid",
+      "timestamp": "2026-04-18T13:39:13.346Z",
+      "fromMe": false
+    },
+    "timestamp": "2026-04-18T13:39:13.347Z"
+  },
+  {
+    "id": "2A27B22CE29274870DA1",
+    "type": "message",
+    "data": {
+      "id": "2A27B22CE29274870DA1",
+      "type": "text",
+      "text": "Fix the Urdu voice response issue in the WhatsApp AI voice message system.\n\nCurrently, the system behaves inconsistently when generating voice responses based on language:\n\n- When the AI responds in English:\n  - The voice message is clear\n  - Audio plays correctly\n  - Duration is normal\n\n- However, when the AI responds in Urdu:\n  - The generated voice message is extremely short (around 1 second)\n  - In many cases, there is no audible sound (silent or empty audio)\n  - This happens even when the text response is long\n\nThis indicates a problem in the Text-to-Speech (TTS) system specifically for Urdu.\n\nInvestigate and fix the issue by focusing on:\n\n1. Urdu TTS Processing:\n- Ensure the Text-to-Speech engine properly supports Urdu language\n- Verify correct voice model is being used for Urdu\n- Check encoding and text formatting before sending to TTS\n\n2. Audio Generation:\n- Ensure full audio is generated based on the complete response text\n- Prevent truncated (cut short) or empty audio files\n\n3. Playback Quality:\n- Ensure Urdu audio is clear, audible, and complete (same as English)\n- Fix silent or near-empty audio outputs\n\n4. Consistency:\n- Voice response quality and duration should be the same across all languages\n- Urdu responses should be as reliable as English ones\n\nThe goal is to ensure that Urdu voice responses are fully generated, clearly audible, and not cut off or silent.",
+      "mediaData": null,
+      "sender": "7190261829710@lid",
+      "timestamp": "2026-04-18T13:40:06.366Z",
+      "fromMe": false
+    },
+    "timestamp": "2026-04-18T13:40:06.367Z"
+  },
+  {
+    "id": "2AA0345EFADA79DD950A",
+    "type": "message",
+    "data": {
+      "id": "2AA0345EFADA79DD950A",
+      "type": "text",
+      "text": "🎙️ [VOICE]:  Hey, can you hear me now? Please let me confirm.",
+      "mediaData": null,
+      "sender": "7190261829710@lid",
+      "timestamp": "2026-04-18T13:53:13.678Z",
+      "fromMe": false
+    },
+    "timestamp": "2026-04-18T13:53:13.683Z"
+  },
+  {
+    "id": "2AA00F1CF3531A341C1C",
+    "type": "message",
+    "data": {
+      "id": "2AA00F1CF3531A341C1C",
+      "type": "text",
+      "text": "🎙️ [VOICE]:  Can you hear me? Please let me confirm.",
+      "mediaData": null,
+      "sender": "7190261829710@lid",
+      "timestamp": "2026-04-18T13:53:16.623Z",
+      "fromMe": false
+    },
+    "timestamp": "2026-04-18T13:53:16.624Z"
+  },
+  {
+    "id": "2A463E92234872E6308D",
+    "type": "message",
+    "data": {
+      "id": "2A463E92234872E6308D",
+      "type": "text",
+      "text": "🎙️ [VOICE]:  کیا حال ہے کیا کر رہے ہیں تمہارے پاس کیا چیزیں ملے بھلائی ہوں جیو سا ہونگڑا",
+      "mediaData": null,
+      "sender": "7190261829710@lid",
+      "timestamp": "2026-04-18T13:53:56.971Z",
+      "fromMe": false
+    },
+    "timestamp": "2026-04-18T13:53:56.973Z"
+  },
+  {
+    "id": "2A8C19CD32D46CEC94E2",
+    "type": "message",
+    "data": {
+      "id": "2A8C19CD32D46CEC94E2",
+      "type": "text",
+      "text": "Update the response formatting logic in the WhatsApp AI system to handle Urdu responses more effectively.\n\nCurrently:\n- When the AI generates responses in English, everything works correctly (text + voice).\n- When the AI generates responses in Urdu script, there are issues with voice generation or playback.\n\nTo resolve this, apply the following change:\n\n1. Roman Urdu Output for Urdu Responses:\n- When the user speaks or sends a message in Urdu, the AI should still understand it normally.\n- However, instead of generating the response in Urdu script (e.g., \"کیا حال ہے\"), the system should convert and output the response in Roman Urdu (e.g., \"kya haal hai\").\n\n2. Consistency in Output:\n- All Urdu-based responses should be written in Roman Urdu / Roman English format.\n- This ensures compatibility with the Text-to-Speech (TTS) system and avoids voice generation issues.\n\n3. Maintain Understanding:\n- The AI must still fully understand Urdu, English, and mixed (Roman Urdu) inputs.\n- Only the output format should change to Roman Urdu when the intended response is Urdu.\n\n4. Voice Generation Stability:\n- By using Roman Urdu text, ensure that the voice generation system produces clear and complete audio responses without truncation or silence.\n\nThe goal is to maintain multilingual understanding while standardizing Urdu responses into Roman Urdu format to ensure stable and reliable voice output.",
+      "mediaData": null,
+      "sender": "7190261829710@lid",
+      "timestamp": "2026-04-18T13:55:35.004Z",
+      "fromMe": false
+    },
+    "timestamp": "2026-04-18T13:55:35.008Z"
+  },
+  {
+    "id": "2ACEEED90470F44FC397",
+    "type": "message",
+    "data": {
+      "id": "2ACEEED90470F44FC397",
+      "type": "text",
+      "text": "🎙️ [VOICE]:  تم انڈرسٹینڈ کیوں نہیں آپ انڈرسٹینڈ کرتے ہیں",
+      "mediaData": null,
+      "sender": "7190261829710@lid",
+      "timestamp": "2026-04-18T13:56:26.415Z",
+      "fromMe": false
+    },
+    "timestamp": "2026-04-18T13:56:26.417Z"
+  },
+  {
+    "id": "2A8AD22CA4DCE1C99444",
+    "type": "message",
+    "data": {
+      "id": "2A8AD22CA4DCE1C99444",
+      "type": "text",
+      "text": "🎙️ [VOICE]:  مجھے جو ہے نا شوز چاہیے کیا آپ پاس ویلیبل ہیں",
+      "mediaData": null,
+      "sender": "7190261829710@lid",
+      "timestamp": "2026-04-18T13:57:11.254Z",
+      "fromMe": false
+    },
+    "timestamp": "2026-04-18T13:57:11.255Z"
+  },
+  {
+    "id": "2AC09B854433362C46DB",
+    "type": "message",
+    "data": {
+      "id": "2AC09B854433362C46DB",
+      "type": "text",
+      "text": "🎙️ [VOICE]:  I need a shoes",
+      "mediaData": null,
+      "sender": "7190261829710@lid",
+      "timestamp": "2026-04-18T14:00:42.940Z",
+      "fromMe": false
+    },
+    "timestamp": "2026-04-18T14:00:42.945Z"
+  },
+  {
+    "id": "2AD35FFB9E79C0A17E6E",
+    "type": "message",
+    "data": {
+      "id": "2AD35FFB9E79C0A17E6E",
+      "type": "text",
+      "text": "🎙️ [VOICE]:  शूज कब तक जो न वेलेबल हो जाएंगे कोई आईडिया है",
+      "mediaData": null,
+      "sender": "7190261829710@lid",
+      "timestamp": "2026-04-18T14:01:13.136Z",
+      "fromMe": false
+    },
+    "timestamp": "2026-04-18T14:01:13.138Z"
+  },
+  {
+    "id": "2A89C447F3C6ED64D744",
+    "type": "message",
+    "data": {
+      "id": "2A89C447F3C6ED64D744",
+      "type": "text",
+      "text": "🎙️ [VOICE]:  Great. You talking, speaking English now? You speaking in English?",
+      "mediaData": null,
+      "sender": "7190261829710@lid",
+      "timestamp": "2026-04-18T14:01:50.837Z",
+      "fromMe": false
+    },
+    "timestamp": "2026-04-18T14:01:50.839Z"
+  },
+  {
+    "id": "2ABDFE2D2F066A4762FC",
+    "type": "message",
+    "data": {
+      "id": "2ABDFE2D2F066A4762FC",
+      "type": "text",
+      "text": "🎙️ [VOICE]:  Okay, and go speaking in English.",
+      "mediaData": null,
+      "sender": "7190261829710@lid",
+      "timestamp": "2026-04-18T14:02:12.105Z",
+      "fromMe": false
+    },
+    "timestamp": "2026-04-18T14:02:12.106Z"
+  },
+  {
+    "id": "A551B65A2F85BADB70C1064A18FC6CB0",
+    "type": "message",
+    "data": {
+      "id": "A551B65A2F85BADB70C1064A18FC6CB0",
+      "type": "text",
+      "text": "Hi",
+      "mediaData": null,
+      "sender": "104728499322986@lid",
+      "timestamp": "2026-04-18T14:04:12.934Z",
+      "fromMe": false
+    },
+    "timestamp": "2026-04-18T14:04:12.935Z"
+  },
+  {
+    "id": "A58AA82BD1C6BA6DA914D2800560DC22",
+    "type": "message",
+    "data": {
+      "id": "A58AA82BD1C6BA6DA914D2800560DC22",
+      "type": "text",
+      "text": "🎙️ [VOICE]:  میں کچھ خریدنا چاہ رہا ہوں",
+      "mediaData": null,
+      "sender": "104728499322986@lid",
+      "timestamp": "2026-04-18T14:04:30.100Z",
+      "fromMe": false
+    },
+    "timestamp": "2026-04-18T14:04:30.101Z"
+  },
+  {
+    "id": "A5BD3FE52AB30895ED66038EB2930397",
+    "type": "message",
+    "data": {
+      "id": "A5BD3FE52AB30895ED66038EB2930397",
+      "type": "text",
+      "text": "🎙️ [VOICE]:  مجھے کچھ خریدنا ہے بہت قیمتی",
+      "mediaData": null,
+      "sender": "104728499322986@lid",
+      "timestamp": "2026-04-18T14:05:01.853Z",
+      "fromMe": false
+    },
+    "timestamp": "2026-04-18T14:05:01.856Z"
+  },
+  {
+    "id": "A57C9A23720BB63B3DA5CF1B8A4F7F36",
+    "type": "message",
+    "data": {
+      "id": "A57C9A23720BB63B3DA5CF1B8A4F7F36",
+      "type": "text",
+      "text": "🎙️ [VOICE]:  پانچ ہزار میرا بجٹ ہے پانچ ہزار میں کچھ ملے گا کچھ کیمرہ خریدنا چاہ رہا تھا",
+      "mediaData": null,
+      "sender": "104728499322986@lid",
+      "timestamp": "2026-04-18T14:05:41.573Z",
+      "fromMe": false
+    },
+    "timestamp": "2026-04-18T14:05:41.574Z"
+  },
+  {
+    "id": "A51589F287CCEA56C3F3E523DD28B91B",
+    "type": "message",
+    "data": {
+      "id": "A51589F287CCEA56C3F3E523DD28B91B",
+      "type": "text",
+      "text": "🎙️ [VOICE]:  یہ تو بہت زبردست ہے تم اچھا جواب دے رہے ہو",
+      "mediaData": null,
+      "sender": "104728499322986@lid",
+      "timestamp": "2026-04-18T14:06:13.318Z",
+      "fromMe": false
+    },
+    "timestamp": "2026-04-18T14:06:13.321Z"
+  },
+  {
+    "id": "2AB9ADE6EA5BCBE25BDD",
+    "type": "message",
+    "data": {
+      "id": "2AB9ADE6EA5BCBE25BDD",
+      "type": "text",
+      "text": "I need shoes",
+      "mediaData": null,
+      "sender": "7190261829710@lid",
+      "timestamp": "2026-04-18T14:11:02.684Z",
+      "fromMe": false
+    },
+    "timestamp": "2026-04-18T14:11:02.694Z"
+  },
+  {
+    "id": "2A5B977D55BF9471B52D",
+    "type": "message",
+    "data": {
+      "id": "2A5B977D55BF9471B52D",
+      "type": "text",
+      "text": "Text message karo",
+      "mediaData": null,
+      "sender": "7190261829710@lid",
+      "timestamp": "2026-04-18T14:11:27.626Z",
+      "fromMe": false
+    },
+    "timestamp": "2026-04-18T14:11:27.721Z"
+  },
+  {
+    "id": "2AA0701018343C81385F",
+    "type": "message",
+    "data": {
+      "id": "2AA0701018343C81385F",
+      "type": "text",
+      "text": "Hello",
+      "mediaData": null,
+      "sender": "7190261829710@lid",
+      "timestamp": "2026-04-18T17:30:33.977Z",
+      "fromMe": false
+    },
+    "timestamp": "2026-04-18T17:30:33.981Z"
+  },
+  {
+    "id": "2AAE88A550D77F047226",
+    "type": "message",
+    "data": {
+      "id": "2AAE88A550D77F047226",
+      "type": "text",
+      "text": "## 🎯 FORMAT-AWARE RESPONSE + VOICE CLONING SYSTEM\n\nEnhance the AI system with smart response format handling and voice cloning capability.\n\n---\n\n## 🔁 1. RESPONSE FORMAT INTELLIGENCE (CRITICAL)\n\nAI must respond in the SAME format as the user input.\n\n### RULES:\n\n- If user sends TEXT → AI must reply in TEXT\n- If user sends VOICE → AI must reply in VOICE\n- If user sends IMAGE → AI replies in TEXT (with understanding)\n\n---\n\n### 🚫 DO NOT:\n\n- Do NOT mix formats randomly\n- Do NOT convert text reply into voice unless user used voice\n- Do NOT send voice when user used text\n\n---\n\n### ✅ EXAMPLES:\n\n- User: \"Hello\" (text)\n  → AI: \"Hello, how can I help you?\" (text)\n\n- User: (voice message)\n  → AI: (voice reply)\n\n- User: text → voice → text\n  → AI must follow sequence strictly:\n    text → voice → text\n\n---\n\n## 🎙️ 2. VOICE CLONING SYSTEM (USER CUSTOM VOICE)\n\nAdd a Voice Cloning feature in AI Settings.\n\n---\n\n## ⚙️ UI REQUIREMENT:\n\nCreate a section:\n\n### \"Voice Settings\"\n\nOptions:\n\n- Default AI Voice\n- Clone My Voice (NEW)\n\n---\n\n## 🎤 VOICE CLONING FLOW:\n\n1. User clicks \"Clone My Voice\"\n2. System asks user to record voice sample (10–30 seconds)\n3. User records and submits audio\n4. Backend processes and generates voice profile\n5. Save voice profile per user\n\n---\n\n## 🔊 AI VOICE OUTPUT:\n\n- When responding in voice:\n  - Use cloned voice (if available)\n  - Otherwise fallback to default AI voice\n\n---\n\n## 🧠 VOICE QUALITY REQUIREMENT:\n\n- Must sound natural (not robotic)\n- Maintain:\n  - User tone\n  - Speaking style\n  - Language (Urdu / English mix)\n\n---\n\n## 🗣️ NATURAL SPEECH BEHAVIOR:\n\nAI must:\n\n- Speak like a human\n- Avoid robotic tone\n- Use natural pauses\n- Follow conversational flow\n\nExample:\n\n❌ Robotic:\n\"Currently our stock is unavailable.\"\n\n✅ Natural:\n\"Abhi hamaray paas yeh stock available nahi hai.\"\n\n---\n\n## 🔄 INTEGRATION WITH CHAT + CALL SYSTEM\n\n- Voice replies must:\n  - Be saved in chat\n  - Have transcription\n\n- Works with:\n  - WhatsApp voice notes\n  - Web calling system\n\n---\n\n## 🔐 MULTI-USER SUPPORT\n\n- Each user:\n  - Has their own cloned voice\n  - Stored securely\n  - Not shared with others\n\n---\n\n## 💾 STORAGE\n\n- Store:\n  - Voice sample\n  - Generated voice profile\n\n- Link it with user ID\n\n---\n\n## 🚀 FINAL GOAL\n\n- AI responds in correct format (text/voice)\n- AI speaks in user's own cloned voice\n- Fully natural conversation\n- Production-ready system",
+      "mediaData": null,
+      "sender": "7190261829710@lid",
+      "timestamp": "2026-04-20T08:12:17.768Z",
+      "fromMe": false
+    },
+    "timestamp": "2026-04-20T08:12:17.772Z"
+  },
+  {
+    "id": "2A04134EA85A4AA9224E",
+    "type": "message",
+    "data": {
+      "id": "2A04134EA85A4AA9224E",
+      "type": "text",
+      "text": "🎙️ [VOICE]:  مجھے یہ بتاؤ کہ ابھی تمہارے پاس ٹاک میں کیا ویلیبل ہے ٹی شئٹ ہے",
+      "mediaData": null,
+      "sender": "7190261829710@lid",
+      "timestamp": "2026-04-20T08:13:22.098Z",
+      "fromMe": false
+    },
+    "timestamp": "2026-04-20T08:13:22.101Z"
+  },
+  {
+    "id": "2A562733F209C853AF27",
+    "type": "message",
+    "data": {
+      "id": "2A562733F209C853AF27",
+      "type": "text",
+      "text": "🎙️ [VOICE]:  అభిజోయనాము జేస్కి టిక్చారు డిటేల్ సండిరు",
+      "mediaData": null,
+      "sender": "7190261829710@lid",
+      "timestamp": "2026-04-20T08:14:05.515Z",
+      "fromMe": false
+    },
+    "timestamp": "2026-04-20T08:14:05.518Z"
+  },
+  {
+    "id": "2A715F47EC761884956A",
+    "type": "message",
+    "data": {
+      "id": "2A715F47EC761884956A",
+      "type": "text",
+      "text": "🎙️ [VOICE]:  नहीं मैं कहा रहा हूँ कि अभी जो मुझे इसकी पिक्चर और डिटेल सेंड करो ठीक है",
+      "mediaData": null,
+      "sender": "7190261829710@lid",
+      "timestamp": "2026-04-20T08:14:20.365Z",
+      "fromMe": false
+    },
+    "timestamp": "2026-04-20T08:14:20.370Z"
+  },
+  {
+    "id": "2A238DC81BF438F5D96F",
+    "type": "message",
+    "data": {
+      "id": "2A238DC81BF438F5D96F",
+      "type": "text",
+      "text": "🎙️ [VOICE]:  اچھا تو مجھے یہ بتاؤ کہ اس کے ساتھ کوئی ڈسکونٹ ہے کیا یہ مجھے 800 پیس کی مل جائے گی",
+      "mediaData": null,
+      "sender": "7190261829710@lid",
+      "timestamp": "2026-04-20T08:15:07.790Z",
+      "fromMe": false
+    },
+    "timestamp": "2026-04-20T08:15:07.792Z"
+  },
+  {
+    "id": "2A77AA998F5AA85C3B88",
+    "type": "message",
+    "data": {
+      "id": "2A77AA998F5AA85C3B88",
+      "type": "text",
+      "text": "🎙️ [VOICE]:  इसकी डिस्कॉंट क्या है? डिस्कॉंट मिल सकती है अगर नहीं मिल सकती है?",
+      "mediaData": null,
+      "sender": "7190261829710@lid",
+      "timestamp": "2026-04-20T08:15:32.916Z",
+      "fromMe": false
+    },
+    "timestamp": "2026-04-20T08:15:32.919Z"
+  },
+  {
+    "id": "2A6089F8B47D4E4FFD4E",
+    "type": "message",
+    "data": {
+      "id": "2A6089F8B47D4E4FFD4E",
+      "type": "text",
+      "text": "🎙️ [VOICE]:  نہیں میں جو ہے نا فیلوپ جو ہے اس کا آٹسو دے سکتا ہوں تو کیا یہ تو میرا آرڈر بک کرنا چاہو گی تو بتاؤں",
+      "mediaData": null,
+      "sender": "7190261829710@lid",
+      "timestamp": "2026-04-20T08:16:13.017Z",
+      "fromMe": false
+    },
+    "timestamp": "2026-04-20T08:16:13.023Z"
+  },
+  {
+    "id": "2A64F9AB34DC1E3C2FE1",
+    "type": "message",
+    "data": {
+      "id": "2A64F9AB34DC1E3C2FE1",
+      "type": "text",
+      "text": "## 🎯 RESPONSE FORMAT SYSTEM (FINAL IMPLEMENTATION)\n\nUpdate the AI system with smart response format handling.\n\n---\n\n## 🔁 CORE RULE (MANDATORY)\n\nAI must ALWAYS respond in the SAME format as the user input.\n\n---\n\n## 📩 RULES:\n\n- If user sends TEXT → AI replies in TEXT\n- If user sends VOICE → AI replies in VOICE\n- If user sends IMAGE → AI replies in TEXT (with analysis)\n\n---\n\n## 🚫 STRICTLY PROHIBITED:\n\n- Do NOT send voice when user sends text\n- Do NOT send text when user sends voice (except transcription internally)\n- Do NOT mix formats\n\n---\n\n## 🔄 EXAMPLE FLOW:\n\nUser sends:\n1. Text → AI replies in text  \n2. Voice → AI replies in voice  \n3. Text → AI replies in text  \n\nSystem must strictly follow this pattern.\n\n---\n\n## 🎙️ VOICE SYSTEM (NO VOICE CLONING)\n\n- DO NOT implement voice cloning\n\n- Use default AI voice only\n\n- Voice should:\n  - Be clear\n  - Natural sounding\n  - Support Urdu + English mix\n\n---\n\n## 💬 CHAT STORAGE\n\n- All messages must be stored:\n  - Text messages as text\n  - Voice messages:\n    - Store audio\n    - Store transcription\n\n---\n\n## 🔄 INTEGRATION\n\n- Must work with:\n  - WhatsApp voice notes\n  - Chat system\n  - AI auto-reply\n\n---\n\n## 🔐 MULTI USER\n\n- Each user has separate chats and settings\n\n---\n\n## 🚀 FINAL GOAL\n\n- Clean, predictable behavior\n- Same-format responses\n- Stable production system\n\nNo voice cloning required.",
+      "mediaData": null,
+      "sender": "7190261829710@lid",
+      "timestamp": "2026-04-20T08:23:50.949Z",
+      "fromMe": false
+    },
+    "timestamp": "2026-04-20T08:23:50.951Z"
+  },
+  {
+    "id": "2AFBBFDA87493299DC46",
+    "type": "message",
+    "data": {
+      "id": "2AFBBFDA87493299DC46",
+      "type": "text",
+      "text": "Ap k pass kaya ha",
+      "mediaData": null,
+      "sender": "7190261829710@lid",
+      "timestamp": "2026-04-20T08:24:16.750Z",
+      "fromMe": false
+    },
+    "timestamp": "2026-04-20T08:24:16.751Z"
+  },
+  {
+    "id": "2A7872E1C91DCA85649A",
+    "type": "message",
+    "data": {
+      "id": "2A7872E1C91DCA85649A",
+      "type": "text",
+      "text": "## 🎯 VOICE CLONING CONDITION (FREE PLAN ONLY)\n\nUpdate the system with the following condition:\n\n---\n\n## ⚠️ VOICE CLONING RULE\n\n- Voice Cloning should ONLY be implemented if:\n  ✔ It is completely FREE\n  ✔ No paid API required\n  ✔ No hidden costs\n  ✔ Production usable quality\n\n---\n\n## ❌ IF NOT FREE:\n\n- DO NOT implement voice cloning\n- Completely skip/remove voice cloning feature\n- Do not add any UI or backend related to it\n\n---\n\n## ✅ FALLBACK SYSTEM (DEFAULT)\n\nIf voice cloning is not free:\n\n- Use default AI voice system\n\n### RULES:\n\n- If user sends TEXT → reply in TEXT\n- If user sends VOICE → reply in VOICE (default AI voice)\n\n---\n\n## 🎙️ VOICE REQUIREMENT\n\n- Use a natural-sounding default voice\n- Support Urdu + English mix\n- Avoid robotic tone\n\n---\n\n## 🎯 FINAL BEHAVIOR\n\nSystem must:\n\n- Be stable\n- Be fully free-based (except user-provided AI keys)\n- Avoid unnecessary complex features\n\n---\n\n## 🚀 FINAL INSTRUCTION\n\nCheck if voice cloning can be implemented fully FREE.\n\n- If YES → implement\n- If NO → skip it completely and proceed with default voice system only",
+      "mediaData": null,
+      "sender": "7190261829710@lid",
+      "timestamp": "2026-04-20T08:28:23.327Z",
+      "fromMe": false
+    },
+    "timestamp": "2026-04-20T08:28:23.329Z"
+  },
+  {
+    "id": "2AFA4436435CD4452B92",
+    "type": "message",
+    "data": {
+      "id": "2AFA4436435CD4452B92",
+      "type": "text",
+      "text": "🎙️ [VOICE]:  اچھا مجھے اوپر اوکے فیلو ہاو جوہر نا تمہارے پاس کوئی ڈسکونڈ نہیں چل رہی",
+      "mediaData": null,
+      "sender": "7190261829710@lid",
+      "timestamp": "2026-04-20T08:40:07.467Z",
+      "fromMe": false
+    },
+    "timestamp": "2026-04-20T08:40:07.469Z"
+  },
+  {
+    "id": "2A24185CC9B73C8A2040",
+    "type": "message",
+    "data": {
+      "id": "2A24185CC9B73C8A2040",
+      "type": "text",
+      "text": "Hi",
+      "mediaData": null,
+      "sender": "7190261829710@lid",
+      "timestamp": "2026-04-20T08:40:38.491Z",
+      "fromMe": false
+    },
+    "timestamp": "2026-04-20T08:40:38.493Z"
+  },
+  {
+    "id": "A524B4FD2A2323D6D707FD0C247D558A",
+    "type": "message",
+    "data": {
+      "id": "A524B4FD2A2323D6D707FD0C247D558A",
+      "type": "text",
+      "text": "🎙️ [VOICE]:  Can you hear me now? Please let me confirm.",
+      "mediaData": null,
+      "sender": "106786426233074@lid",
+      "timestamp": "2026-04-20T08:52:48.322Z",
+      "fromMe": false
+    },
+    "timestamp": "2026-04-20T08:52:48.334Z"
+  },
+  {
+    "id": "A580D4CD94268583F092FF0B9244FE62",
+    "type": "message",
+    "data": {
+      "id": "A580D4CD94268583F092FF0B9244FE62",
+      "type": "text",
+      "text": "G sir",
+      "mediaData": null,
+      "sender": "243164573073631@lid",
+      "timestamp": "2026-04-20T08:58:00.335Z",
+      "fromMe": false
+    },
+    "timestamp": "2026-04-20T08:58:00.338Z"
+  },
+  {
+    "id": "A530EACA6792364933A1206C4708054B",
+    "type": "message",
+    "data": {
+      "id": "A530EACA6792364933A1206C4708054B",
+      "type": "text",
+      "text": "Assalamualaikum",
+      "mediaData": null,
+      "sender": "243164573073631@lid",
+      "timestamp": "2026-04-20T08:58:03.627Z",
+      "fromMe": false
+    },
+    "timestamp": "2026-04-20T08:58:03.629Z"
+  },
+  {
+    "id": "A5C3B633AA019E756C2AA7FE052D12F4",
+    "type": "message",
+    "data": {
+      "id": "A5C3B633AA019E756C2AA7FE052D12F4",
+      "type": "text",
+      "text": "Shukkar Allahamdulilah",
+      "mediaData": null,
+      "sender": "243164573073631@lid",
+      "timestamp": "2026-04-20T09:00:14.565Z",
+      "fromMe": false
+    },
+    "timestamp": "2026-04-20T09:00:14.567Z"
+  },
+  {
+    "id": "A572B2D9415223A4744A9B117BF6E006",
+    "type": "message",
+    "data": {
+      "id": "A572B2D9415223A4744A9B117BF6E006",
+      "type": "text",
+      "text": "Kaso madad Bhai ?",
+      "mediaData": null,
+      "sender": "243164573073631@lid",
+      "timestamp": "2026-04-20T09:00:23.646Z",
+      "fromMe": false
+    },
+    "timestamp": "2026-04-20T09:00:23.648Z"
+  },
+  {
+    "id": "A53B6770811350874FD85D341DE8A553",
+    "type": "message",
+    "data": {
+      "id": "A53B6770811350874FD85D341DE8A553",
+      "type": "text",
+      "text": "Nai mujha Kuch nai lena",
+      "mediaData": null,
+      "sender": "243164573073631@lid",
+      "timestamp": "2026-04-20T09:01:09.024Z",
+      "fromMe": false
+    },
+    "timestamp": "2026-04-20T09:01:09.025Z"
+  },
+  {
+    "id": "A5848EF40B5778589E6B8B6099EFD2DD",
+    "type": "message",
+    "data": {
+      "id": "A5848EF40B5778589E6B8B6099EFD2DD",
+      "type": "text",
+      "text": "Hi",
+      "mediaData": null,
+      "sender": "106786426233074@lid",
+      "timestamp": "2026-04-20T09:03:57.879Z",
+      "fromMe": false
+    },
+    "timestamp": "2026-04-20T09:03:57.881Z"
+  },
+  {
+    "id": "A5BF01ACC73FEBD078E113C8A783D2A1",
+    "type": "message",
+    "data": {
+      "id": "A5BF01ACC73FEBD078E113C8A783D2A1",
+      "type": "text",
+      "text": "🎙️ [VOICE]:  Can you hear me? Please confirm.",
+      "mediaData": null,
+      "sender": "106786426233074@lid",
+      "timestamp": "2026-04-20T09:04:51.610Z",
+      "fromMe": false
+    },
+    "timestamp": "2026-04-20T09:04:51.612Z"
+  },
+  {
+    "id": "2AB6FFE62F41DF86B848",
+    "type": "message",
+    "data": {
+      "id": "2AB6FFE62F41DF86B848",
+      "type": "text",
+      "text": "🎙️ [VOICE]:  Hey, can you hear me? Please let me confirm and voice response.",
+      "mediaData": null,
+      "sender": "7190261829710@lid",
+      "timestamp": "2026-04-20T09:27:15.977Z",
+      "fromMe": false
+    },
+    "timestamp": "2026-04-20T09:27:15.982Z"
+  },
+  {
+    "id": "2A39B44FF9121081D5B2",
+    "type": "message",
+    "data": {
+      "id": "2A39B44FF9121081D5B2",
+      "type": "text",
+      "text": "🎙️ [VOICE]:  Hello, can you hear me?",
+      "mediaData": null,
+      "sender": "7190261829710@lid",
+      "timestamp": "2026-04-20T09:27:25.036Z",
+      "fromMe": false
+    },
+    "timestamp": "2026-04-20T09:27:25.038Z"
+  },
+  {
+    "id": "2A0957840BB728F2F90E",
+    "type": "message",
+    "data": {
+      "id": "2A0957840BB728F2F90E",
+      "type": "text",
+      "text": "🎙️ [VOICE]:  Can you hear me now?",
+      "mediaData": null,
+      "sender": "7190261829710@lid",
+      "timestamp": "2026-04-20T09:28:35.761Z",
+      "fromMe": false
+    },
+    "timestamp": "2026-04-20T09:28:35.763Z"
+  },
+  {
+    "id": "2AA8A594C0C5436990D5",
+    "type": "message",
+    "data": {
+      "id": "2AA8A594C0C5436990D5",
+      "type": "text",
+      "text": "🎙️ [VOICE]:  Hey, can you hear me now?",
+      "mediaData": null,
+      "sender": "7190261829710@lid",
+      "timestamp": "2026-04-20T09:29:24.409Z",
+      "fromMe": false
+    },
+    "timestamp": "2026-04-20T09:29:24.411Z"
+  },
+  {
+    "id": "2AF32B750E85A92EC8FD",
+    "type": "message",
+    "data": {
+      "id": "2AF32B750E85A92EC8FD",
+      "type": "text",
+      "text": "## 🚨 ISSUE: AI NOT RESPONDING TO VOICE MESSAGES\n\nThere is a problem in the system:\n\n- When I send a VOICE message from WhatsApp,\n- The message is being received on the dashboard ✅\n- BUT:\n\n❌ AI is NOT generating any response for voice  \n❌ AI is NOT replying in voice  \n❌ No transcription is happening  \n❌ Chat stays stuck after voice message  \n\n---\n\n## 🎯 EXPECTED BEHAVIOR\n\n- When a user sends a voice message:\n  ✔ AI should understand it  \n  ✔ AI should generate a response  \n  ✔ AI should reply back in VOICE  \n\n---\n\n## 🔁 RESPONSE RULE\n\n- Voice input → Voice reply (must)\n\n---\n\n## ⚠️ REQUIRED FIX\n\n- Fix voice processing pipeline (STT → AI → TTS)\n- Ensure voice messages are properly handled end-to-end\n- Make sure response is sent back to WhatsApp AND shown in dashboard chat\n\n---\n\n## 🚀 GOAL\n\nVoice messaging should work exactly like text:\n- Receive → Process → Reply (in voice)",
+      "mediaData": null,
+      "sender": "7190261829710@lid",
+      "timestamp": "2026-04-20T09:30:59.655Z",
+      "fromMe": false
+    },
+    "timestamp": "2026-04-20T09:30:59.656Z"
+  },
+  {
+    "id": "2AA3DFB8BA57A59D7F8E",
+    "type": "message",
+    "data": {
+      "id": "2AA3DFB8BA57A59D7F8E",
+      "type": "text",
+      "text": "Hi",
+      "mediaData": null,
+      "sender": "7190261829710@lid",
+      "timestamp": "2026-04-20T09:32:02.628Z",
+      "fromMe": false
+    },
+    "timestamp": "2026-04-20T09:32:02.631Z"
+  },
+  {
+    "id": "2A5265D4AD5761C7D161",
+    "type": "message",
+    "data": {
+      "id": "2A5265D4AD5761C7D161",
+      "type": "text",
+      "text": "## 🚨 ISSUE: AI NOT RESPONDING TO VOICE MESSAGES\n\nThere is a problem in the system:\n\n- When I send a VOICE message from WhatsApp,\n- The message is being received on the dashboard ✅\n- BUT:\n\n❌ AI is NOT generating any response for voice  \n❌ AI is NOT replying in voice  \n❌ No transcription is happening  \n❌ Chat stays stuck after voice message  \n\n---\n\n## 🎯 EXPECTED BEHAVIOR\n\n- When a user sends a voice message:\n  ✔ AI should understand it  \n  ✔ AI should generate a response  \n  ✔ AI should reply back in VOICE  \n\n---\n\n## 🔁 RESPONSE RULE\n\n- Voice input → Voice reply (must)\n\n---\n\n## ⚠️ REQUIRED FIX\n\n- Fix voice processing pipeline (STT → AI → TTS)\n- Ensure voice messages are properly handled end-to-end\n- Make sure response is sent back to WhatsApp AND shown in dashboard chat\n\n---\n\n## 🚀 GOAL\n\nVoice messaging should work exactly like text:\n- Receive → Process → Reply (in voice)",
+      "mediaData": null,
+      "sender": "7190261829710@lid",
+      "timestamp": "2026-04-20T09:33:07.153Z",
+      "fromMe": false
+    },
+    "timestamp": "2026-04-20T09:33:07.155Z"
+  },
+  {
+    "id": "2AFC35003224B69865A4",
+    "type": "message",
+    "data": {
+      "id": "2AFC35003224B69865A4",
+      "type": "text",
+      "text": "Hi",
+      "mediaData": null,
+      "sender": "7190261829710@lid",
+      "timestamp": "2026-04-20T09:33:30.955Z",
+      "fromMe": false
+    },
+    "timestamp": "2026-04-20T09:33:30.959Z"
+  },
+  {
+    "id": "2AAB0EAC1DA2DC9BFEC7",
+    "type": "message",
+    "data": {
+      "id": "2AAB0EAC1DA2DC9BFEC7",
+      "type": "text",
+      "text": "🎙️ [VOICE]:  Hello, can you hear me? Please let me... Hey, can you hear me?",
+      "mediaData": null,
+      "sender": "7190261829710@lid",
+      "timestamp": "2026-04-20T09:45:06.886Z",
+      "fromMe": false
+    },
+    "timestamp": "2026-04-20T09:45:06.891Z"
+  },
+  {
+    "id": "A533ADB3333761BB120706123A5E27D2",
+    "type": "message",
+    "data": {
+      "id": "A533ADB3333761BB120706123A5E27D2",
+      "type": "text",
+      "text": "Hello",
+      "mediaData": null,
+      "sender": "7190261829710@lid",
+      "timestamp": "2026-04-20T12:02:12.951Z",
+      "fromMe": false
+    },
+    "timestamp": "2026-04-20T12:02:12.956Z"
+  },
+  {
+    "id": "A5B187BAA7334CDBCC1D80261029495E",
+    "type": "message",
+    "data": {
+      "id": "A5B187BAA7334CDBCC1D80261029495E",
+      "type": "text",
+      "text": "Ho",
+      "mediaData": null,
+      "sender": "7190261829710@lid",
+      "timestamp": "2026-04-20T12:02:26.055Z",
+      "fromMe": false
+    },
+    "timestamp": "2026-04-20T12:02:26.056Z"
+  },
+  {
+    "id": "A5AFD731099D25FD81BC3C0ACECFCD5E",
+    "type": "message",
+    "data": {
+      "id": "A5AFD731099D25FD81BC3C0ACECFCD5E",
+      "type": "text",
+      "text": "Hi",
+      "mediaData": null,
+      "sender": "7190261829710@lid",
+      "timestamp": "2026-04-20T12:03:47.851Z",
+      "fromMe": false
+    },
+    "timestamp": "2026-04-20T12:03:47.860Z"
+  },
+  {
+    "id": "A5B51376EE355EDD37EF8CE2D297162C",
+    "type": "message",
+    "data": {
+      "id": "A5B51376EE355EDD37EF8CE2D297162C",
+      "type": "text",
+      "text": "Hi",
+      "mediaData": null,
+      "sender": "7190261829710@lid",
+      "timestamp": "2026-04-20T12:04:15.115Z",
+      "fromMe": false
+    },
+    "timestamp": "2026-04-20T12:04:15.122Z"
+  },
+  {
+    "id": "A5225DCA10871277985A25F996623029",
+    "type": "message",
+    "data": {
+      "id": "A5225DCA10871277985A25F996623029",
+      "type": "text",
+      "text": "Hello",
+      "mediaData": null,
+      "sender": "7190261829710@lid",
+      "timestamp": "2026-04-20T12:07:53.404Z",
+      "fromMe": false
+    },
+    "timestamp": "2026-04-20T12:07:53.420Z"
+  },
+  {
+    "id": "2A42142B3F007BCADD76",
+    "type": "message",
+    "data": {
+      "id": "2A42142B3F007BCADD76",
+      "type": "text",
+      "text": "Hello",
+      "mediaData": null,
+      "sender": "7190261829710@lid",
+      "timestamp": "2026-04-20T15:57:32.604Z",
+      "fromMe": false
+    },
+    "timestamp": "2026-04-20T15:57:32.617Z"
+  },
+  {
+    "id": "2A6941CCA502A0C69E40",
+    "type": "message",
+    "data": {
+      "id": "2A6941CCA502A0C69E40",
+      "type": "text",
+      "text": "Hello",
+      "mediaData": null,
+      "sender": "7190261829710@lid",
+      "timestamp": "2026-04-20T16:08:06.744Z",
+      "fromMe": false
+    },
+    "timestamp": "2026-04-20T16:08:06.751Z"
+  },
+  {
+    "id": "2A384306C47E4C6A9CD2",
+    "type": "message",
+    "data": {
+      "id": "2A384306C47E4C6A9CD2",
+      "type": "text",
+      "text": "Hello",
+      "mediaData": null,
+      "sender": "7190261829710@lid",
+      "timestamp": "2026-04-20T16:23:35.419Z",
+      "fromMe": false
+    },
+    "timestamp": "2026-04-20T16:23:35.427Z"
+  },
+  {
+    "id": "2A635054560488ABAE85",
+    "type": "message",
+    "data": {
+      "id": "2A635054560488ABAE85",
+      "type": "text",
+      "text": "Hi",
+      "mediaData": null,
+      "sender": "7190261829710@lid",
+      "timestamp": "2026-04-20T16:25:00.397Z",
+      "fromMe": false
+    },
+    "timestamp": "2026-04-20T16:25:00.405Z"
+  },
+  {
+    "id": "2AEBCB432C27AACC1DE0",
+    "type": "message",
+    "data": {
+      "id": "2AEBCB432C27AACC1DE0",
+      "type": "text",
+      "text": "Hi",
+      "mediaData": null,
+      "sender": "7190261829710@lid",
+      "timestamp": "2026-04-20T16:25:35.909Z",
+      "fromMe": false
+    },
+    "timestamp": "2026-04-20T16:25:35.920Z"
+  }
+]

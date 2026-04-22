@@ -1,0 +1,20 @@
+[
+  {
+    "title": "red t shirt ",
+    "description": "",
+    "price": 1200,
+    "stock": 100,
+    "category": "T-Shirts",
+    "imageUrl": "https://www.bing.com/images/search?view=detailV2&ccid=xU1B1N4y&id=83E2FBA58ED3F019525A3C14AC4A245B9C48F8DC&thid=OIP.xU1B1N4yNIitYKdy61_5RgHaIC&mediaurl=https%3a%2f%2fth.bing.com%2fth%2fid%2fR.c54d41d4de323488ad60a772eb5ff946%3frik%3d3PhInFskSqwUPA%26riu%3dhttp%253a%252f%252f3.bp.blogspot.com%252f-Qq_fi4HGNXc%252fTb-xaPywysI%252fAAAAAAAAAA0%252fwnQ72u073eA%252fs1600%252fPlain_Blank_T_Shirts.jpg%26ehk%3ddBLEYFGhJfj5mBHGG%252bQZb59scM3rlv7Kdlrj3SfY2Rg%253d%26risl%3d%26pid%3dImgRaw%26r%3d0&exph=1164&expw=1073&q=t+shirt&FORM=IRPRST&ck=C16503EF162D3B41ABEA1D13C7A63BD8&selectedIndex=5&itb=0",
+    "id": "1776442835197"
+  },
+  {
+    "title": "black t shirts",
+    "description": "",
+    "price": 1800,
+    "stock": 12,
+    "category": "T-Shirts",
+    "imageUrl": "https://cdn.phototourl.com/free/2026-04-17-62f075fb-7801-4c4b-8f4a-0a3c82794a20.png",
+    "id": "1776447174519"
+  }
+]

@@ -1,0 +1,47 @@
+[
+  {
+    "title": "sports shoes",
+    "description": "",
+    "price": 10000,
+    "stock": 12,
+    "category": "Shoes",
+    "imageUrl": "https://cdn.phototourl.com/free/2026-04-20-981c9aa0-7c0d-4f04-a06b-6e6189e22d25.webp",
+    "id": "1776707290041"
+  },
+  {
+    "title": "watches",
+    "description": "",
+    "price": 1000,
+    "stock": 1000,
+    "category": "Watches",
+    "imageUrl": "https://cdn.phototourl.com/free/2026-04-20-981c9aa0-7c0d-4f04-a06b-6e6189e22d25.webp",
+    "id": "1776707430866"
+  },
+  {
+    "title": "black t shirts",
+    "description": "",
+    "price": 10000,
+    "stock": 1000,
+    "category": "T-Shirts",
+    "imageUrl": "https://cdn.phototourl.com/free/2026-04-20-981c9aa0-7c0d-4f04-a06b-6e6189e22d25.webp",
+    "id": "1776707499458"
+  },
+  {
+    "title": "red shoes",
+    "description": "",
+    "price": 5000,
+    "stock": 10,
+    "category": "Shoes",
+    "imageUrl": "https://cdn.phototourl.com/free/2026-04-20-981c9aa0-7c0d-4f04-a06b-6e6189e22d25.webp",
+    "id": "1776707579878"
+  },
+  {
+    "title": "new watches",
+    "description": "",
+    "price": 500,
+    "stock": 50,
+    "category": "Watches",
+    "imageUrl": "https://cdn.phototourl.com/free/2026-04-20-981c9aa0-7c0d-4f04-a06b-6e6189e22d25.webp",
+    "id": "1776707627785"
+  }
+]
