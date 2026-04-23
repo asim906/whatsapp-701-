@@ -4,12 +4,13 @@ import { saveMessageLocal, getAllChatsLocal, getMessagesForChatLocal } from '../
 
 interface Message {
   id: string;
+  chatId: string;
   type: 'text' | 'image' | 'audio';
   text: string;
   mediaData?: string;
-  sender: string;
   fromMe: boolean;
   timestamp: string;
+  status?: 'sent' | 'delivered' | 'read';
 }
 
 interface Chat {
@@ -89,7 +90,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
   },
 
   addMessage: async (msg) => {
-    const incomingJid = msg.sender;
+    const incomingJid = msg.chatId;
     const normalizedIncoming = normalizeJid(incomingJid);
     
     // 🔥 STEP 1: INSTANT REACTIVE UI UPDATE (Synchronous)

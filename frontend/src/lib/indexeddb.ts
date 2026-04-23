@@ -109,7 +109,7 @@ export const saveMessageLocal = async (message: any) => {
     // Save message
     await tx.objectStore('messages').put({
       id: message.id,
-      chatId: message.sender,
+      chatId: message.chatId,
       type: message.type || 'text',
       text: message.text || "",
       mediaData: message.mediaData,
@@ -119,10 +119,10 @@ export const saveMessageLocal = async (message: any) => {
 
     // Update chat
     const chatStore = tx.objectStore('chats');
-    let chat = await chatStore.get(message.sender);
+    let chat = await chatStore.get(message.chatId);
     if (!chat) {
       chat = {
-        id: message.sender,
+        id: message.chatId,
         unreadCount: message.fromMe ? 0 : 1,
         lastMessage: message.text || (message.type === 'image' ? 'photo' : (message.type === 'audio' ? 'Voice note' : '')),
         lastMessageTime: message.timestamp,

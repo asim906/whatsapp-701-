@@ -58,9 +58,9 @@ export default function ChatsPage() {
     // Optimistic UI update via Store
     const optimisticMsg: any = {
       id: msgId,
+      chatId: selectedChat.id,
       type: 'text',
       text,
-      sender: selectedChat.id,
       fromMe: true,
       timestamp,
     };
