@@ -30,7 +30,7 @@ interface ChatState {
   
   // Actions
   setChats: (chats: Chat[]) => void;
-  selectChat: (chatId: string) => Promise<void>;
+  selectChat: (chatId: string | null) => Promise<void>;
   addMessage: (msg: Message) => Promise<void>;
   refreshChats: () => Promise<void>;
   refreshLeads: () => Promise<void>;
@@ -68,6 +68,10 @@ export const useChatStore = create<ChatState>((set, get) => ({
   },
 
   selectChat: async (chatId) => {
+    if (!chatId) {
+      set({ selectedChatId: null, activeMessages: [] });
+      return;
+    }
     const normalizedId = normalizeJid(chatId);
     console.log(`[Store] 🎯 Selecting conversation: ${normalizedId}`);
     
