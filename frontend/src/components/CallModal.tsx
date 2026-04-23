@@ -37,13 +37,16 @@ export default function CallModal({ isOpen, onClose, contactName, contactJid, us
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       
-      socketRef.current = io("http://localhost:3001");
+      if (!socketRef.current) {
+        const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001";
+        socketRef.current = io(backendUrl);
       
-      socketRef.current.on("connect", () => {
-        setStatus("Live");
-        setIsCalling(true);
-        socketRef.current?.emit("call_start", { userId, targetJid: contactJid });
-      });
+        socketRef.current.on("connect", () => {
+          setStatus("Live");
+          setIsCalling(true);
+          socketRef.current?.emit("call_start", { userId, targetJid: contactJid });
+        });
+      }
 
       socketRef.current.on("ai_thinking", () => setIsThinking(true));
       

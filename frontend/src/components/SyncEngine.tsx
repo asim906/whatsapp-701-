@@ -8,7 +8,7 @@ import io from 'socket.io-client';
 import { useChatStore } from '@/store/chatStore';
 import { performCatchupSync, syncInitialChatsFromServer } from '@/lib/syncManager';
 
-const BACKEND_URL = "http://localhost:3001";
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001";
 
 export function SyncEngine() {
   const [user] = useAuthState(auth);
@@ -56,6 +56,8 @@ export function SyncEngine() {
     socket.on("new_message", async (msg: any) => {
       console.log(`[SyncEngine] ⚡ Instant Push: ${msg.id} | From: ${msg.sender}`);
       try {
+        // Ensure chatId is present for the store/IndexedDB
+        if (!msg.chatId && msg.sender) msg.chatId = msg.sender;
         await addMessage(msg);
       } catch (err) {
         console.error("[SyncEngine] ❌ Error in instant push:", err);

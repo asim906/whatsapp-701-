@@ -22,6 +22,8 @@ import { onAuthStateChanged, signOut } from "firebase/auth";
 import { doc, getDoc, onSnapshot } from "firebase/firestore";
 import { SyncEngine } from "@/components/SyncEngine";
 
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001";
+
 export default function DashboardLayout({
   children,
 }: {
@@ -46,7 +48,7 @@ export default function DashboardLayout({
       
       // Fallback: If webhook didn't run (common in local dev), trigger manual verification
       if (sessionId) {
-        fetch(`http://localhost:3001/api/stripe/verify-session?session_id=${sessionId}`)
+        fetch(`${BACKEND_URL}/api/stripe/verify-session?session_id=${sessionId}`)
           .then(res => res.json())
           .then(data => console.log("Stripe fallback verification:", data))
           .catch(err => console.error("Verify session error:", err));

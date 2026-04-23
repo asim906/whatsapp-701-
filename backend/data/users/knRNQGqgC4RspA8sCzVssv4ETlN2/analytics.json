@@ -1,0 +1,16 @@
+{
+  "totals": {
+    "messages": 27,
+    "aiResponses": 20,
+    "humanResponses": 2,
+    "leads": 0
+  },
+  "daily": {
+    "2026-04-23": {
+      "messages": 27,
+      "aiResponses": 20,
+      "humanResponses": 2,
+      "leads": 0
+    }
+  }
+}

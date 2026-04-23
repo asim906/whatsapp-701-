@@ -5,6 +5,8 @@ import { BarChart3, TrendingUp, TrendingDown, MessageSquare, Bot, Users } from "
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "@/lib/firebase";
 
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001";
+
 export default function AnalyticsPage() {
   const [user] = useAuthState(auth);
   const [data, setData] = useState<any>(null);
@@ -12,7 +14,7 @@ export default function AnalyticsPage() {
 
   useEffect(() => {
     if (!user) return;
-    fetch(`http://localhost:3001/api/analytics/${user.uid}`)
+    fetch(`${BACKEND_URL}/api/analytics/${user.uid}`)
       .then(res => res.json())
       .then(resData => {
         setData(resData);

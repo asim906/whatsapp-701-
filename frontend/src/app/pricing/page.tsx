@@ -6,6 +6,8 @@ import { Check, Bot, Zap, ArrowRight, XCircle } from "lucide-react";
 import { auth, db } from "@/lib/firebase";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001";
+
 export default function PricingPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -60,7 +62,7 @@ export default function PricingPage() {
     }
 
     try {
-      const response = await fetch("http://localhost:3001/api/stripe/create-checkout-session", {
+      const response = await fetch(`${BACKEND_URL}/api/stripe/create-checkout-session`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -18,6 +18,8 @@ interface Order {
   timestamp: string;
 }
 
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001";
+
 export default function OrdersPage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
@@ -27,7 +29,7 @@ export default function OrdersPage() {
   const fetchOrders = async () => {
     if (!auth.currentUser) return;
     try {
-      const res = await fetch(`http://localhost:3001/api/orders/${auth.currentUser.uid}`);
+      const res = await fetch(`${BACKEND_URL}/api/orders/${auth.currentUser.uid}`);
       if (res.ok) {
         const data = await res.json();
         // Sort newest first
@@ -48,7 +50,7 @@ export default function OrdersPage() {
     if (!auth.currentUser) return;
     if (!confirm("Are you sure you want to delete this order?")) return;
     try {
-      await fetch(`http://localhost:3001/api/orders/${auth.currentUser.uid}/${orderId}`, {
+      await fetch(`${BACKEND_URL}/api/orders/${auth.currentUser.uid}/${orderId}`, {
         method: "DELETE"
       });
       setOrders(orders.filter(o => o.id !== orderId));
@@ -61,7 +63,7 @@ export default function OrdersPage() {
     if (!auth.currentUser) return;
     try {
       const updatedOrder = { ...order, status: newStatus };
-      await fetch(`http://localhost:3001/api/orders/${auth.currentUser.uid}`, {
+      await fetch(`${BACKEND_URL}/api/orders/${auth.currentUser.uid}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(updatedOrder)

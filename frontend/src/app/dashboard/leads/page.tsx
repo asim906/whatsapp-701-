@@ -14,6 +14,8 @@ interface ColumnConfig {
 
 import { useChatStore } from "@/store/chatStore";
 
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001";
+
 export default function LeadsPage() {
   const [user] = useAuthState(auth);
   const leads = useChatStore(state => state.leads);
@@ -32,7 +34,7 @@ export default function LeadsPage() {
     try {
       await refreshLeads();
       
-      const confResp = await fetch(`http://localhost:3001/api/leads/settings/${user.uid}`);
+      const confResp = await fetch(`${BACKEND_URL}/api/leads/settings/${user.uid}`);
       if (confResp.ok) setColumns(await confResp.json());
     } catch (err) {
       console.error("Fetch error:", err);
@@ -47,7 +49,7 @@ export default function LeadsPage() {
     setColumns(newCols);
     if (!user) return;
     try {
-      await fetch(`http://localhost:3001/api/leads/settings/${user.uid}`, {
+      await fetch(`${BACKEND_URL}/api/leads/settings/${user.uid}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newCols),
@@ -85,7 +87,7 @@ export default function LeadsPage() {
       details: {} 
     };
     try {
-      const res = await fetch(`http://localhost:3001/api/leads/${user.uid}`, {
+      const res = await fetch(`${BACKEND_URL}/api/leads/${user.uid}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(leadData),
@@ -101,7 +103,7 @@ export default function LeadsPage() {
   const deleteLead = async (leadId: string) => {
     if (!user) return;
     try {
-      const res = await fetch(`http://localhost:3001/api/leads/${user.uid}/${leadId}`, { method: "DELETE" });
+      const res = await fetch(`${BACKEND_URL}/api/leads/${user.uid}/${leadId}`, { method: "DELETE" });
       if (res.ok) await refreshLeads();
     } catch (err) { console.error(err); }
   };
@@ -122,7 +124,7 @@ export default function LeadsPage() {
 
     
     try {
-      await fetch(`http://localhost:3001/api/leads/${user.uid}`, {
+      await fetch(`${BACKEND_URL}/api/leads/${user.uid}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(updatedLead),

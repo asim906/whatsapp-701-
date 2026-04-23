@@ -1,6 +1,6 @@
 import { saveMessageLocal, saveLeadLocal, saveChatsBulkLocal } from './indexeddb';
 
-const BACKEND_URL = "http://localhost:3001";
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001";
 
 export async function syncInitialChatsFromServer(userId: string) {
   const url = `${BACKEND_URL}/api/whatsapp/chats/${userId}`;
@@ -46,6 +46,8 @@ export async function performCatchupSync(userId: string) {
     for (const item of pendingItems) {
       try {
         if (item.type === 'message') {
+          // Ensure chatId is present
+          if (!item.data.chatId && item.data.sender) item.data.chatId = item.data.sender;
           // saveMessageLocal handles both chats and messages stores
           await saveMessageLocal(item.data);
           successfulIds.push(item.id);

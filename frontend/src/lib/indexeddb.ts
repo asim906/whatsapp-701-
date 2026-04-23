@@ -107,6 +107,11 @@ export const saveMessageLocal = async (message: any) => {
     const tx = db.transaction(['messages', 'chats'], 'readwrite');
     
     // Save message
+    if (!message.chatId) {
+      console.warn("IDB: Skipping saveMessageLocal because chatId is missing", message);
+      return;
+    }
+    
     await tx.objectStore('messages').put({
       id: message.id,
       chatId: message.chatId,

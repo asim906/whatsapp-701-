@@ -7,6 +7,8 @@ import { auth } from "@/lib/firebase";
 
 const CATEGORIES = ["Shoes", "Watches", "T-Shirts", "All"];
 
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001";
+
 export default function StorePage() {
   const [user] = useAuthState(auth);
   const [products, setProducts] = useState<any[]>([]);
@@ -18,7 +20,7 @@ export default function StorePage() {
   const fetchProducts = async () => {
     if (!user) return;
     try {
-      const res = await fetch(`http://localhost:3001/api/store/${user.uid}`);
+      const res = await fetch(`${BACKEND_URL}/api/store/${user.uid}`);
       if (res.ok) {
         const data = await res.json();
         setProducts(data);
@@ -47,7 +49,7 @@ export default function StorePage() {
     };
 
     try {
-      const res = await fetch(`http://localhost:3001/api/store/${user.uid}`, {
+      const res = await fetch(`${BACKEND_URL}/api/store/${user.uid}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(productData),
@@ -65,7 +67,7 @@ export default function StorePage() {
   const deleteProduct = async (productId: string) => {
     if (!user) return;
     try {
-      const res = await fetch(`http://localhost:3001/api/store/${user.uid}/${productId}`, {
+      const res = await fetch(`${BACKEND_URL}/api/store/${user.uid}/${productId}`, {
         method: "DELETE",
       });
       if (res.ok) {

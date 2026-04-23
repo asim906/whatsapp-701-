@@ -63,7 +63,8 @@ export const useChatStore = create<ChatState>((set, get) => ({
     const user = auth.currentUser;
     if (!user) return;
     try {
-        const resp = await fetch(`http://localhost:3001/api/leads/${user.uid}`);
+        const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001";
+        const resp = await fetch(`${backendUrl}/api/leads/${user.uid}`);
         if (resp.ok) set({ leads: await resp.json() });
     } catch (err) { console.warn("Store: Lead fetch error", err); }
   },

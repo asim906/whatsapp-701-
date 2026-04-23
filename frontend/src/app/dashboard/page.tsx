@@ -8,6 +8,8 @@ import { doc, getDoc, onSnapshot, setDoc } from "firebase/firestore";
 import { useChatStore } from "@/store/chatStore";
 import { QRCodeSVG } from "qrcode.react";
 
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001";
+
 export default function DashboardPage() {
   const [user] = useAuthState(auth);
   const [userData, setUserData] = useState<any>(null);
@@ -23,7 +25,7 @@ export default function DashboardPage() {
   const fetchRealStats = async () => {
     if (!user) return;
     try {
-      const res = await fetch(`http://localhost:3001/api/analytics/${user.uid}`);
+      const res = await fetch(`${BACKEND_URL}/api/analytics/${user.uid}`);
       if (res.ok) {
         const data = await res.json();
         setRealStats(data.totals);
@@ -59,7 +61,7 @@ export default function DashboardPage() {
   useEffect(() => {
     if (!user || !userData) return;
     if (userData.whatsappConnected === true) {
-      fetch("http://localhost:3001/api/whatsapp/start", {
+      fetch(`${BACKEND_URL}/api/whatsapp/start`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ userId: user.uid }),
@@ -77,7 +79,7 @@ export default function DashboardPage() {
     setQrCode("");
 
     try {
-      await fetch("http://localhost:3001/api/whatsapp/start", {
+      await fetch(`${BACKEND_URL}/api/whatsapp/start`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ userId: user.uid }),

@@ -1,8 +1,8 @@
 {
   "totals": {
-    "messages": 9,
+    "messages": 13,
     "aiResponses": 0,
-    "humanResponses": 0,
+    "humanResponses": 2,
     "leads": 0
   },
   "daily": {
@@ -10,6 +10,12 @@
       "messages": 9,
       "aiResponses": 0,
       "humanResponses": 0,
+      "leads": 0
+    },
+    "2026-04-23": {
+      "messages": 4,
+      "aiResponses": 0,
+      "humanResponses": 2,
       "leads": 0
     }
   }
