@@ -10,11 +10,34 @@ const __dirname = path.dirname(__filename);
 
 // Initialize Firebase Admin SDK (ESM-compatible)
 if (!getApps().length) {
-    const serviceAccount = require('./serviceAccountKey.json');
-    initializeApp({
-        credential: cert(serviceAccount),
-        databaseURL: "https://whatsapp-ai-e0b6e-default-rtdb.firebaseio.com"
-    });
+    let serviceAccount;
+    if (process.env.FIREBASE_SERVICE_ACCOUNT) {
+        try {
+            serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
+        } catch (e) {
+            console.error("Failed to parse FIREBASE_SERVICE_ACCOUNT env var", e);
+        }
+    }
+
+    if (!serviceAccount) {
+        try {
+            serviceAccount = require('./serviceAccountKey.json');
+        } catch (e) {
+            console.warn("serviceAccountKey.json not found, falling back to applicationDefault()");
+        }
+    }
+
+    if (serviceAccount) {
+        initializeApp({
+            credential: cert(serviceAccount),
+            databaseURL: "https://whatsapp-ai-e0b6e-default-rtdb.firebaseio.com"
+        });
+    } else {
+        initializeApp({
+            credential: applicationDefault(),
+            databaseURL: "https://whatsapp-ai-e0b6e-default-rtdb.firebaseio.com"
+        });
+    }
 }
 
 const adminDb = getFirestore();
