@@ -197,7 +197,7 @@ export default function ChatsPage() {
               {/* Chat Header */}
               <div className="h-16 px-4 md:px-6 border-b border-white/5 bg-white/[0.02] flex justify-between items-center z-10">
                 <div className="flex items-center gap-3">
-                  <button className="md:hidden p-2 -ml-2 text-foreground/60" onClick={() => setSelectedChat(null)}>
+                  <button className="md:hidden p-2 -ml-2 text-foreground/60" onClick={() => selectChat(null)}>
                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
                   </button>
                   <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center">
