@@ -129,6 +129,7 @@ export class VoiceService {
           .audioBitrate('32k')
           .audioChannels(1)
           .audioFrequency(48000)
+          .outputOptions(['-avoid_negative_ts make_zero'])
           .toFormat('ogg')
           .on('start', (commandLine) => {
              console.log(`[Voice] FFmpeg started: ${commandLine}`);
