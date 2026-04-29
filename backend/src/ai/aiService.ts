@@ -52,16 +52,29 @@ export const generateAIResponse = async (
             
             if (isCallMode) {
                 console.log(`[${userId}] 🎤 Synthesizing voice response for WhatsApp...`);
+                let audioBuffer: Buffer | null = null;
+                
                 try {
-                    const audioBuffer = await VoiceService.textToSpeech(finalText, settings.language === 'urdu' ? 'ur' : 'en');
+                    audioBuffer = await VoiceService.textToSpeech(finalText, settings.language === 'urdu' ? 'ur' : 'en');
+                } catch (voiceErr) {
+                    console.error(`[${userId}] ⚠️ First TTS attempt failed, retrying once...`, voiceErr);
+                    try {
+                        audioBuffer = await VoiceService.textToSpeech(finalText, settings.language === 'urdu' ? 'ur' : 'en');
+                    } catch (retryErr) {
+                        console.error(`[${userId}] ❌ Voice synthesis failed after retry:`, retryErr);
+                    }
+                }
+
+                if (audioBuffer) {
                     await sock.sendMessage(remoteJid, { audio: audioBuffer, ptt: true, mimetype: 'audio/ogg; codecs=opus' });
-                    
                     // Convert to base64 for Dashboard UI
                     mediaData = `data:audio/ogg;base64,${audioBuffer.toString('base64')}`;
                     console.log(`[${userId}] ✅ Voice response sent to WhatsApp.`);
-                } catch (voiceErr) {
-                    console.error(`[${userId}] ❌ Voice synthesis failed:`, voiceErr);
-                    // Strictly match input: If input was voice, and synthesis fails, we do NOT send text.
+                } else {
+                    console.log(`[${userId}] ⚠️ Falling back to text response due to TTS failure.`);
+                    await sock.sendMessage(remoteJid, { text: finalText });
+                    // Update payload type to text since we fell back
+                    isCallMode = false; // This is a safe local override so outPayload below knows it's text
                 }
             } else {
                 await sock.sendMessage(remoteJid, { text: finalText });

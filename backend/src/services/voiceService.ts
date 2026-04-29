@@ -30,59 +30,91 @@ export class VoiceService {
     const oggPath = path.join(TEMP_DIR, `${tempId}.ogg`);
 
     try {
-      console.log(`[Voice] Starting Edge TTS for: "${text.substring(0, 30)}..." (Lang: ${language})`);
-      
       // 1. Sanitize text: Remove markdown and emojis
       const cleanText = text
         .replace(/[*_#~`]/g, '')
         .replace(/[\u{1F600}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F300}-\u{1F5FF}\u{1F900}-\u{1F9FF}\u{1FA70}-\u{1FAFF}]/gu, '')
         .trim() || "Empty message";
 
-      // 2. Select Voice
+      // 2. Select Voice - Auto Language Detection
       let voice = 'en-US-AriaNeural'; 
-      if (language === 'ur' || language === 'ur-PK' || language.toLowerCase().includes('urdu')) {
-        voice = 'ur-PK-UzmaNeural';
-      }
-
-      console.log(`[Voice] Selected Voice: ${voice}`);
-
-      // 3. Synthesize
-      const tts = new UniversalEdgeTTS(cleanText, voice);
-      const audioData: any = await tts.synthesize();
+      // Regex to detect Arabic/Urdu script characters
+      const urduRegex = /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]/;
       
-      if (!audioData) {
-        throw new Error("Edge TTS returned no audio data.");
-      }
-
-      console.log(`[Voice] Audio data received. Type: ${typeof audioData}, IsBuffer: ${Buffer.isBuffer(audioData)}`);
-
-      // 4. Robust Buffer Conversion
-      let buffer: Buffer;
+      const isUrdu = urduRegex.test(cleanText) || language === 'ur' || language === 'ur-PK' || language.toLowerCase().includes('urdu');
       
-      // Handle the object format: { audio: Blob, subtitle: [...] }
-      if (audioData.audio && typeof audioData.audio.arrayBuffer === 'function') {
-        console.log(`[Voice] Detected Blob in audio property. Converting...`);
-        const arrayBuffer = await audioData.audio.arrayBuffer();
-        buffer = Buffer.from(arrayBuffer);
-      } else if (Buffer.isBuffer(audioData)) {
-        buffer = audioData;
-      } else if (audioData instanceof Uint8Array) {
-        buffer = Buffer.from(audioData);
-      } else if (audioData.data && (audioData.data instanceof Uint8Array || Array.isArray(audioData.data))) {
-        buffer = Buffer.from(audioData.data);
-      } else {
-        console.error("[Voice] Unsupported audio data format:", JSON.stringify(audioData, null, 2).substring(0, 500));
-        throw new Error("Unsupported audio data format from Edge TTS");
+      if (isUrdu) {
+        voice = 'ur-PK-UzmaNeural'; // Supports both Urdu and mixed English nicely
       }
 
-      fs.writeFileSync(mp3Path, buffer);
-      console.log(`[Voice] MP3 generated: ${buffer.byteLength} bytes`);
+      console.log(`[Voice] Starting TTS | Voice: ${voice} | Text length: ${cleanText.length} | Preview: "${cleanText.substring(0, 30)}..."`);
 
-      // 4. Convert MP3 to Opus OGG (WhatsApp Requirement)
+      // 3. Split text into chunks to prevent TTS cutoff for long messages
+      const MAX_CHUNK_LENGTH = 800; // Safe limit per TTS request
+      const textChunks: string[] = [];
+      let currentChunk = '';
+      
+      // Split by common sentence enders including Urdu full stop (۔) and newlines
+      const parts = cleanText.split(/([.!?۔\n]+)/); 
+      
+      for (let i = 0; i < parts.length; i++) {
+        const part = parts[i];
+        if (!part) continue;
+        
+        if ((currentChunk.length + part.length) > MAX_CHUNK_LENGTH) {
+          // If a single word is huge, force split
+          if (currentChunk.trim()) {
+            textChunks.push(currentChunk.trim());
+          }
+          currentChunk = part;
+        } else {
+          currentChunk += part;
+        }
+      }
+      if (currentChunk.trim()) {
+        textChunks.push(currentChunk.trim());
+      }
+      
+      if (textChunks.length === 0) textChunks.push("Empty message");
+
+      // 4. Synthesize chunks and concatenate MP3 buffers
+      let finalAudioBuffer: Buffer = Buffer.alloc(0);
+
+      for (const chunk of textChunks) {
+        if (!chunk.trim()) continue;
+        
+        const tts = new UniversalEdgeTTS(chunk, voice);
+        const audioData: any = await tts.synthesize();
+        
+        if (!audioData) {
+          throw new Error("Edge TTS returned no audio data for chunk.");
+        }
+
+        let buffer: Buffer;
+        if (audioData.audio && typeof audioData.audio.arrayBuffer === 'function') {
+          const arrayBuffer = await audioData.audio.arrayBuffer();
+          buffer = Buffer.from(arrayBuffer);
+        } else if (Buffer.isBuffer(audioData)) {
+          buffer = audioData;
+        } else if (audioData instanceof Uint8Array) {
+          buffer = Buffer.from(audioData);
+        } else if (audioData.data && (audioData.data instanceof Uint8Array || Array.isArray(audioData.data))) {
+          buffer = Buffer.from(audioData.data);
+        } else {
+          throw new Error("Unsupported audio data format from Edge TTS");
+        }
+        
+        // MP3 frames can be safely concatenated by joining buffers
+        finalAudioBuffer = Buffer.concat([finalAudioBuffer, buffer]);
+      }
+
+      fs.writeFileSync(mp3Path, finalAudioBuffer);
+      console.log(`[Voice] MP3 generated from ${textChunks.length} chunks: ${finalAudioBuffer.byteLength} bytes`);
+
+      // 5. Convert concatenated MP3 to Opus OGG (WhatsApp Requirement)
       return new Promise((resolve, reject) => {
         ffmpeg(mp3Path)
           .toFormat('opus')
-          .on('start', (cmd) => console.log(`[Voice] FFmpeg Command: ${cmd}`))
           .on('end', () => {
              console.log(`[Voice] OGG conversion complete.`);
              const oggBuffer = fs.readFileSync(oggPath);

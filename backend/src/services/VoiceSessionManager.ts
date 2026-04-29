@@ -98,13 +98,30 @@ export class VoiceSessionManager {
                     // Persistence: Save to Firebase
                     await adminDb.collection('users').doc(session.userId).collection('inbox').doc(aiMsg.id).set(aiMsg);
 
-                    // 4. TTS via Google
+                    // 4. TTS with Retry Safety
                     const settingsDoc = await adminDb.collection('users').doc(session.userId).collection('settings').doc('ai').get();
                     const settings = settingsDoc.data();
-                    const audioResponse = await VoiceService.textToSpeech(replyText, settings?.language === 'urdu' ? 'ur' : 'en');
                     
-                    // 5. Stream back to client
-                    socket.emit('audio_response', audioResponse);
+                    let audioResponse: Buffer | null = null;
+                    try {
+                        audioResponse = await VoiceService.textToSpeech(replyText, settings?.language === 'urdu' ? 'ur' : 'en');
+                    } catch (err) {
+                        console.error("[Voice] First TTS attempt failed, retrying...");
+                        try {
+                            audioResponse = await VoiceService.textToSpeech(replyText, settings?.language === 'urdu' ? 'ur' : 'en');
+                        } catch (retryErr) {
+                            console.error("[Voice] TTS failed after retry:", retryErr);
+                        }
+                    }
+                    
+                    if (audioResponse) {
+                        // 5. Stream back to client
+                        socket.emit('audio_response', audioResponse);
+                    } else {
+                        // If TTS totally fails, emit transcript so user at least sees what AI said, but log error
+                        socket.emit('call_error', 'Voice generation failed, but AI replied in text.');
+                    }
+                    
                     socket.emit('transcript_final', { user: transcript, ai: replyText });
 
                 } catch (error) {
