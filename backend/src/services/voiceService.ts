@@ -80,20 +80,21 @@ export class VoiceService {
       // 4. Synthesize chunks and concatenate MP3 buffers
       let finalAudioBuffer: Buffer = Buffer.alloc(0);
 
-      for (const chunk of textChunks) {
+      for (let index = 0; index < textChunks.length; index++) {
+        const chunk = textChunks[index];
         if (!chunk.trim()) continue;
         
+        console.log(`[Voice] Synthesizing chunk ${index + 1}/${textChunks.length}: "${chunk.substring(0, 50)}..."`);
         const tts = new UniversalEdgeTTS(chunk, voice);
         const audioData: any = await tts.synthesize();
         
         if (!audioData) {
-          throw new Error("Edge TTS returned no audio data for chunk.");
+          throw new Error(`Edge TTS returned no audio data for chunk ${index + 1}.`);
         }
 
         let buffer: Buffer;
         if (audioData.audio && typeof audioData.audio.arrayBuffer === 'function') {
-          const arrayBuffer = await audioData.audio.arrayBuffer();
-          buffer = Buffer.from(arrayBuffer);
+          buffer = Buffer.from(await audioData.audio.arrayBuffer());
         } else if (Buffer.isBuffer(audioData)) {
           buffer = audioData;
         } else if (audioData instanceof Uint8Array) {
@@ -104,35 +105,57 @@ export class VoiceService {
           throw new Error("Unsupported audio data format from Edge TTS");
         }
         
-        // MP3 frames can be safely concatenated by joining buffers
+        console.log(`[Voice] Chunk ${index + 1} Buffer size: ${buffer.byteLength} bytes`);
+        if (buffer.byteLength < 100) {
+           console.warn(`[Voice] WARNING: Very small buffer returned for chunk ${index + 1}. Audio might be empty!`);
+        }
+
         finalAudioBuffer = Buffer.concat([finalAudioBuffer, buffer]);
       }
 
+      console.log(`[Voice] Total MP3 generated from ${textChunks.length} chunks: ${finalAudioBuffer.byteLength} bytes`);
+      if (finalAudioBuffer.byteLength === 0) {
+          throw new Error("Final synthesized MP3 buffer is empty (0 bytes).");
+      }
+
       fs.writeFileSync(mp3Path, finalAudioBuffer);
-      console.log(`[Voice] MP3 generated from ${textChunks.length} chunks: ${finalAudioBuffer.byteLength} bytes`);
 
       // 5. Convert concatenated MP3 to Opus OGG (WhatsApp Requirement)
       return new Promise((resolve, reject) => {
         ffmpeg(mp3Path)
-          .toFormat('opus')
+          // STRICT WHATSAPP PTT REQUIREMENTS
+          .audioCodec('libopus')
+          .audioBitrate('32k')
+          .toFormat('ogg')
+          .on('start', (commandLine) => {
+             console.log(`[Voice] FFmpeg started: ${commandLine}`);
+          })
           .on('end', () => {
-             console.log(`[Voice] OGG conversion complete.`);
+             console.log(`[Voice] FFmpeg OGG conversion complete.`);
              const oggBuffer = fs.readFileSync(oggPath);
+             console.log(`[Voice] Final OGG Buffer size: ${oggBuffer.byteLength} bytes`);
+             
+             if (oggBuffer.byteLength < 500) {
+                 console.warn(`[Voice] WARNING: Generated OGG file is suspiciously small (${oggBuffer.byteLength} bytes). It might be silent/0:00.`);
+             }
+
              // Cleanup
              try {
                if (fs.existsSync(mp3Path)) fs.unlinkSync(mp3Path);
                if (fs.existsSync(oggPath)) fs.unlinkSync(oggPath);
              } catch (e) {}
+             
              resolve(oggBuffer);
           })
-          .on('error', (err) => {
-            console.error('[Voice] FFmpeg Conversion Error:', err);
+          .on('error', (err, stdout, stderr) => {
+            console.error('[Voice] FFmpeg Conversion Error:', err.message);
+            console.error('[Voice] FFmpeg Stderr:', stderr);
             reject(err);
           })
           .save(oggPath);
       });
     } catch (error) {
-      console.error('[Voice] TTS Error:', error);
+      console.error('[Voice] TTS Pipeline Fatal Error:', error);
       // Ensure cleanup if error happens
       try {
         if (fs.existsSync(mp3Path)) fs.unlinkSync(mp3Path);
