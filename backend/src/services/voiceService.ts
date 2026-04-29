@@ -124,8 +124,11 @@ export class VoiceService {
       return new Promise((resolve, reject) => {
         ffmpeg(mp3Path)
           // STRICT WHATSAPP PTT REQUIREMENTS
+          .inputFormat('mp3')
           .audioCodec('libopus')
           .audioBitrate('32k')
+          .audioChannels(1)
+          .audioFrequency(48000)
           .toFormat('ogg')
           .on('start', (commandLine) => {
              console.log(`[Voice] FFmpeg started: ${commandLine}`);
