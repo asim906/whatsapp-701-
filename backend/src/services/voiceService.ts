@@ -31,51 +31,83 @@ export class VoiceService {
     }
 
     try {
+      // 1. Sanitize text
       const cleanText = text
         .replace(/[*_#~`]/g, '')
         .replace(/[\u{1F600}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F300}-\u{1F5FF}\u{1F900}-\u{1F9FF}\u{1FA70}-\u{1FAFF}]/gu, '')
         .trim() || "Empty message";
 
-      let ttsLang = 'en'; 
-      // Regex to detect Arabic/Urdu script characters
+      // 2. Determine voice
+      let voice = 'en-US-AriaNeural'; 
       const urduRegex = /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]/;
       
-      if (urduRegex.test(cleanText) || language === 'ur' || language === 'ur-PK' || language.toLowerCase().includes('urdu')) {
-        ttsLang = 'ur';
-      }
+      const isUrdu = urduRegex.test(cleanText) || language === 'ur' || language === 'ur-PK' || language.toLowerCase().includes('urdu');
+      if (isUrdu) voice = 'ur-PK-UzmaNeural';
 
-      console.log(`[Voice] Unified Google TTS generating audio for lang: ${ttsLang}...`);
-      
+      console.log(`[Voice] Starting TTS | Voice: ${voice} | Text preview: "${cleanText.substring(0, 30)}..."`);
+
       const tempId = Date.now();
+      const mp3Path = path.join(TEMP_DIR, `tts_${tempId}.mp3`);
+      const wavPath = path.join(TEMP_DIR, `tts_${tempId}.wav`);
       const oggPath = path.join(TEMP_DIR, `tts_${tempId}.ogg`);
 
-      const { getAllAudioBase64 } = await import('google-tts-api');
-      const results = await getAllAudioBase64(cleanText, {
-          lang: ttsLang,
-          slow: false,
-          host: 'https://translate.google.com',
-          splitPunct: '۔,.'
-      });
-      
-      // We must use FFmpeg concat demuxer to safely merge MP3s without breaking ID3 tags
-      const listPath = path.join(TEMP_DIR, `list_${tempId}.txt`);
-      let listContent = '';
-      const tempFiles = [];
+      // 3. Chunk text intelligently to prevent UniversalEdgeTTS truncation
+      const MAX_CHUNK_LENGTH = 800;
+      const parts = cleanText.split(/([.!?۔\n]+)/); 
+      const textChunks: string[] = [];
+      let currentChunk = '';
 
-      for (let i = 0; i < results.length; i++) {
-          const chunkPath = path.join(TEMP_DIR, `chunk_${tempId}_${i}.mp3`);
-          fs.writeFileSync(chunkPath, Buffer.from(results[i].base64, 'base64'));
-          // Use forward slashes for FFmpeg compatibility on all OS
-          listContent += `file '${chunkPath.replace(/\\/g, '/')}'\n`;
-          tempFiles.push(chunkPath);
+      for (let i = 0; i < parts.length; i++) {
+        const part = parts[i];
+        if (!part) continue;
+        if ((currentChunk.length + part.length) > MAX_CHUNK_LENGTH) {
+          if (currentChunk.trim()) textChunks.push(currentChunk.trim());
+          currentChunk = part;
+        } else {
+          currentChunk += part;
+        }
+      }
+      if (currentChunk.trim()) textChunks.push(currentChunk.trim());
+      if (textChunks.length === 0) textChunks.push("Empty message");
+
+      // 4. Synthesize Edge TTS
+      let finalAudioBuffer: Buffer = Buffer.alloc(0);
+      for (let index = 0; index < textChunks.length; index++) {
+        const chunk = textChunks[index];
+        if (!chunk.trim()) continue;
+        
+        const tts = new UniversalEdgeTTS(chunk, voice);
+        const audioData: any = await tts.synthesize();
+        
+        let buffer: Buffer;
+        if (audioData.audio && typeof audioData.audio.arrayBuffer === 'function') {
+          buffer = Buffer.from(await audioData.audio.arrayBuffer());
+        } else if (Buffer.isBuffer(audioData)) {
+          buffer = audioData;
+        } else {
+          buffer = Buffer.from(audioData.data || audioData);
+        }
+        
+        finalAudioBuffer = Buffer.concat([finalAudioBuffer, buffer]);
       }
       
-      fs.writeFileSync(listPath, listContent);
+      fs.writeFileSync(mp3Path, finalAudioBuffer);
       
+      // 5. Convert MP3 to WAV (CRITICAL: This strips all corrupt MP3 headers and encoder delays)
+      await new Promise((resolve, reject) => {
+          ffmpeg(mp3Path)
+            .toFormat('wav')
+            .audioChannels(1)
+            .audioFrequency(48000)
+            .on('end', resolve)
+            .on('error', reject)
+            .save(wavPath);
+      });
+
+      // 6. Convert pure PCM WAV to Opus OGG (Guarantees perfect duration headers)
       return new Promise((resolve, reject) => {
-          ffmpeg()
-            .input(listPath)
-            .inputOptions(['-f concat', '-safe 0'])
+          ffmpeg(wavPath)
+            .inputFormat('wav')
             .audioCodec('libopus')
             .audioBitrate('32k')
             .audioChannels(1)
@@ -83,20 +115,20 @@ export class VoiceService {
             .outputOptions(['-avoid_negative_ts make_zero'])
             .toFormat('ogg')
             .on('end', () => {
-               console.log(`[Voice] Google TTS Concatenation & Conversion complete.`);
+               console.log(`[Voice] FFmpeg OGG conversion complete.`);
                const oggBuffer = fs.readFileSync(oggPath);
+               
                // Cleanup
                try {
+                 if (fs.existsSync(mp3Path)) fs.unlinkSync(mp3Path);
+                 if (fs.existsSync(wavPath)) fs.unlinkSync(wavPath);
                  if (fs.existsSync(oggPath)) fs.unlinkSync(oggPath);
-                 if (fs.existsSync(listPath)) fs.unlinkSync(listPath);
-                 for (const file of tempFiles) {
-                     if (fs.existsSync(file)) fs.unlinkSync(file);
-                 }
                } catch (e) {}
+               
                resolve(oggBuffer);
             })
             .on('error', (err) => {
-              console.error('[Voice] FFmpeg Concat Error:', err.message);
+              console.error('[Voice] FFmpeg Conversion Error:', err.message);
               reject(err);
             })
             .save(oggPath);
