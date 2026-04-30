@@ -24,7 +24,7 @@ export class VoiceService {
    * Convert Text to Speech (Generates an Opus OGG file buffer for WhatsApp PTT)
    * Using Microsoft Edge TTS (Free, high-quality neural voices)
    */
-  static async textToSpeech(text: string, language: string = 'en'): Promise<Buffer> {
+  static async textToSpeech(text: string, language: string = 'en', settings: any = null): Promise<Buffer> {
     const TEMP_DIR = path.join(process.cwd(), 'temp_audio');
     if (!fs.existsSync(TEMP_DIR)) {
       fs.mkdirSync(TEMP_DIR, { recursive: true });
@@ -44,8 +44,34 @@ export class VoiceService {
       const isUrdu = urduRegex.test(cleanText) || language === 'ur' || language === 'ur-PK' || language.toLowerCase().includes('urdu');
       if (isUrdu) voice = 'ur-PK-UzmaNeural';
 
-      console.log(`[Voice] Starting TTS | Voice: ${voice} | Text preview: "${cleanText.substring(0, 30)}..."`);
+      console.log(`[Voice] Starting TTS | Text preview: "${cleanText.substring(0, 30)}..."`);
 
+      // ==========================================
+      // PREMIUM PIPELINE: OpenAI Native TTS
+      // ==========================================
+      const openAiKey = settings?.openAiKey || process.env.OPENAI_API_KEY;
+      if (openAiKey) {
+          try {
+              console.log(`[Voice] Using Premium OpenAI TTS for flawless output...`);
+              const openai = new OpenAI({ apiKey: openAiKey });
+              const mp3 = await openai.audio.speech.create({
+                model: "tts-1",
+                voice: "nova", // Nova sounds fantastic for both English and Urdu
+                input: cleanText,
+                response_format: "opus" // Native WhatsApp compatible!
+              });
+              
+              const buffer = Buffer.from(await mp3.arrayBuffer());
+              console.log(`[Voice] OpenAI TTS generated ${buffer.byteLength} bytes natively.`);
+              return buffer; // Bypass FFmpeg completely! Perfect duration!
+          } catch (openaiErr: any) {
+              console.warn(`[Voice] OpenAI TTS Failed, falling back to Edge TTS: ${openaiErr.message}`);
+          }
+      }
+
+      // ==========================================
+      // FALLBACK PIPELINE: Microsoft Edge TTS
+      // ==========================================
       const tempId = Date.now();
       const mp3Path = path.join(TEMP_DIR, `tts_${tempId}.mp3`);
       const wavPath = path.join(TEMP_DIR, `tts_${tempId}.wav`);
@@ -91,6 +117,13 @@ export class VoiceService {
         finalAudioBuffer = Buffer.concat([finalAudioBuffer, buffer]);
       }
       
+      console.log(`[Voice] Edge TTS Generated MP3 size: ${finalAudioBuffer.byteLength} bytes`);
+      
+      // CRITICAL: Prevent 0:00 silent voice notes when Microsoft blocks Railway IPs
+      if (finalAudioBuffer.byteLength < 2000) {
+          throw new Error(`Edge TTS returned empty or invalid data (IP likely blocked). Buffer size: ${finalAudioBuffer.byteLength}`);
+      }
+
       fs.writeFileSync(mp3Path, finalAudioBuffer);
       
       // 5. Convert MP3 to WAV (CRITICAL: This strips all corrupt MP3 headers and encoder delays)

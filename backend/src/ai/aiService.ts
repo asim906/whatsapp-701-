@@ -55,11 +55,11 @@ export const generateAIResponse = async (
                 let audioBuffer: Buffer | null = null;
                 
                 try {
-                    audioBuffer = await VoiceService.textToSpeech(finalText, settings.language === 'urdu' ? 'ur' : 'en');
+                    audioBuffer = await VoiceService.textToSpeech(finalText, settings.language === 'urdu' ? 'ur' : 'en', settings);
                 } catch (voiceErr) {
                     console.error(`[${userId}] ⚠️ First TTS attempt failed, retrying once...`, voiceErr);
                     try {
-                        audioBuffer = await VoiceService.textToSpeech(finalText, settings.language === 'urdu' ? 'ur' : 'en');
+                        audioBuffer = await VoiceService.textToSpeech(finalText, settings.language === 'urdu' ? 'ur' : 'en', settings);
                     } catch (retryErr) {
                         console.error(`[${userId}] ❌ Voice synthesis failed after retry:`, retryErr);
                     }
