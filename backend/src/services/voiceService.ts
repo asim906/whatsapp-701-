@@ -80,40 +80,61 @@ export class VoiceService {
       // 4. Synthesize chunks and concatenate MP3 buffers
       let finalAudioBuffer: Buffer = Buffer.alloc(0);
 
-      for (let index = 0; index < textChunks.length; index++) {
-        const chunk = textChunks[index];
-        if (!chunk.trim()) continue;
-        
-        console.log(`[Voice] Synthesizing chunk ${index + 1}/${textChunks.length}: "${chunk.substring(0, 50)}..."`);
-        const tts = new UniversalEdgeTTS(chunk, voice);
-        const audioData: any = await tts.synthesize();
-        
-        if (!audioData) {
-          throw new Error(`Edge TTS returned no audio data for chunk ${index + 1}.`);
-        }
+      try {
+          for (let index = 0; index < textChunks.length; index++) {
+            const chunk = textChunks[index];
+            if (!chunk.trim()) continue;
+            
+            console.log(`[Voice] Synthesizing chunk ${index + 1}/${textChunks.length}: "${chunk.substring(0, 50)}..."`);
+            const tts = new UniversalEdgeTTS(chunk, voice);
+            const audioData: any = await tts.synthesize();
+            
+            if (!audioData) {
+              throw new Error(`Edge TTS returned no audio data for chunk ${index + 1}.`);
+            }
 
-        let buffer: Buffer;
-        if (audioData.audio && typeof audioData.audio.arrayBuffer === 'function') {
-          buffer = Buffer.from(await audioData.audio.arrayBuffer());
-        } else if (Buffer.isBuffer(audioData)) {
-          buffer = audioData;
-        } else if (audioData instanceof Uint8Array) {
-          buffer = Buffer.from(audioData);
-        } else if (audioData.data && (audioData.data instanceof Uint8Array || Array.isArray(audioData.data))) {
-          buffer = Buffer.from(audioData.data);
-        } else {
-          throw new Error("Unsupported audio data format from Edge TTS");
-        }
-        
-        console.log(`[Voice] Chunk ${index + 1} Buffer size: ${buffer.byteLength} bytes`);
-        if (buffer.byteLength < 100) {
-           console.warn(`[Voice] WARNING: Very small buffer returned for chunk ${index + 1}. Audio might be empty!`);
-        }
+            let buffer: Buffer;
+            if (audioData.audio && typeof audioData.audio.arrayBuffer === 'function') {
+              buffer = Buffer.from(await audioData.audio.arrayBuffer());
+            } else if (Buffer.isBuffer(audioData)) {
+              buffer = audioData;
+            } else if (audioData instanceof Uint8Array) {
+              buffer = Buffer.from(audioData);
+            } else if (audioData.data && (audioData.data instanceof Uint8Array || Array.isArray(audioData.data))) {
+              buffer = Buffer.from(audioData.data);
+            } else {
+              throw new Error("Unsupported audio data format from Edge TTS");
+            }
+            
+            console.log(`[Voice] Chunk ${index + 1} Buffer size: ${buffer.byteLength} bytes`);
+            
+            // RAILWAY/DATACENTER TRUNCATION BUG DETECTION
+            if (buffer.byteLength < 2000) {
+               console.warn(`[Voice] WARNING: Truncated buffer detected (${buffer.byteLength} bytes). Edge TTS connection dropped.`);
+               throw new Error("Edge TTS Truncated Buffer");
+            }
 
-        finalAudioBuffer = Buffer.concat([finalAudioBuffer, buffer]);
+            finalAudioBuffer = Buffer.concat([finalAudioBuffer, buffer]);
+          }
+      } catch (edgeError: any) {
+          console.error(`[Voice] Edge TTS Failed: ${edgeError.message}. Using Google TTS Fallback...`);
+          // Google TTS Fallback (Extremely robust for Datacenters)
+          const { getAllAudioBase64 } = await import('google-tts-api');
+          const results = await getAllAudioBase64(cleanText, {
+              lang: isUrdu ? 'ur' : 'en',
+              slow: false,
+              host: 'https://translate.google.com',
+              splitPunct: ',.?'
+          });
+          
+          finalAudioBuffer = Buffer.alloc(0);
+          for (const res of results) {
+              finalAudioBuffer = Buffer.concat([finalAudioBuffer, Buffer.from(res.base64, 'base64')]);
+          }
+          console.log(`[Voice] Google TTS Fallback generated ${finalAudioBuffer.byteLength} bytes.`);
       }
 
-      console.log(`[Voice] Total MP3 generated from ${textChunks.length} chunks: ${finalAudioBuffer.byteLength} bytes`);
+      console.log(`[Voice] Total MP3 generated: ${finalAudioBuffer.byteLength} bytes`);
       if (finalAudioBuffer.byteLength === 0) {
           throw new Error("Final synthesized MP3 buffer is empty (0 bytes).");
       }

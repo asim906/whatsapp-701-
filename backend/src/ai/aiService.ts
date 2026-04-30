@@ -67,8 +67,8 @@ export const generateAIResponse = async (
 
                 if (audioBuffer) {
                     await sock.sendMessage(remoteJid, { audio: audioBuffer, ptt: true, mimetype: 'audio/ogg; codecs=opus' });
-                    // Convert to base64 for Dashboard UI
-                    mediaData = `data:audio/ogg;base64,${audioBuffer.toString('base64')}`;
+                    // Convert to base64 for Dashboard UI - EXACT MIME TYPE is critical for Chrome/Edge to parse duration
+                    mediaData = `data:audio/ogg; codecs=opus;base64,${audioBuffer.toString('base64')}`;
                     console.log(`[${userId}] ✅ Voice response sent to WhatsApp.`);
                 } else {
                     console.log(`[${userId}] ⚠️ Falling back to text response due to TTS failure.`);
