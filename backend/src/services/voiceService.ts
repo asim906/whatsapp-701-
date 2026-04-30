@@ -24,161 +24,87 @@ export class VoiceService {
    * Convert Text to Speech (Generates an Opus OGG file buffer for WhatsApp PTT)
    * Using Microsoft Edge TTS (Free, high-quality neural voices)
    */
-  static async textToSpeech(text: string, language: string = 'en-US'): Promise<Buffer> {
-    const tempId = `tts_${Date.now()}`;
-    const mp3Path = path.join(TEMP_DIR, `${tempId}.mp3`);
-    const oggPath = path.join(TEMP_DIR, `${tempId}.ogg`);
+  static async textToSpeech(text: string, language: string = 'en'): Promise<Buffer> {
+    const TEMP_DIR = path.join(process.cwd(), 'temp_audio');
+    if (!fs.existsSync(TEMP_DIR)) {
+      fs.mkdirSync(TEMP_DIR, { recursive: true });
+    }
 
     try {
-      // 1. Sanitize text: Remove markdown and emojis
       const cleanText = text
         .replace(/[*_#~`]/g, '')
         .replace(/[\u{1F600}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F300}-\u{1F5FF}\u{1F900}-\u{1F9FF}\u{1FA70}-\u{1FAFF}]/gu, '')
         .trim() || "Empty message";
 
-      // 2. Select Voice - Auto Language Detection
-      let voice = 'en-US-AriaNeural'; 
+      let ttsLang = 'en'; 
       // Regex to detect Arabic/Urdu script characters
       const urduRegex = /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]/;
       
-      const isUrdu = urduRegex.test(cleanText) || language === 'ur' || language === 'ur-PK' || language.toLowerCase().includes('urdu');
-      
-      if (isUrdu) {
-        voice = 'ur-PK-UzmaNeural'; // Supports both Urdu and mixed English nicely
+      if (urduRegex.test(cleanText) || language === 'ur' || language === 'ur-PK' || language.toLowerCase().includes('urdu')) {
+        ttsLang = 'ur';
       }
 
-      console.log(`[Voice] Starting TTS | Voice: ${voice} | Text length: ${cleanText.length} | Preview: "${cleanText.substring(0, 30)}..."`);
+      console.log(`[Voice] Unified Google TTS generating audio for lang: ${ttsLang}...`);
+      
+      const tempId = Date.now();
+      const oggPath = path.join(TEMP_DIR, `tts_${tempId}.ogg`);
 
-      // 3. Split text into chunks to prevent TTS cutoff for long messages
-      const MAX_CHUNK_LENGTH = 800; // Safe limit per TTS request
-      const textChunks: string[] = [];
-      let currentChunk = '';
+      const { getAllAudioBase64 } = await import('google-tts-api');
+      const results = await getAllAudioBase64(cleanText, {
+          lang: ttsLang,
+          slow: false,
+          host: 'https://translate.google.com',
+          splitPunct: '۔,.'
+      });
       
-      // Split by common sentence enders including Urdu full stop (۔) and newlines
-      const parts = cleanText.split(/([.!?۔\n]+)/); 
-      
-      for (let i = 0; i < parts.length; i++) {
-        const part = parts[i];
-        if (!part) continue;
-        
-        if ((currentChunk.length + part.length) > MAX_CHUNK_LENGTH) {
-          // If a single word is huge, force split
-          if (currentChunk.trim()) {
-            textChunks.push(currentChunk.trim());
-          }
-          currentChunk = part;
-        } else {
-          currentChunk += part;
-        }
-      }
-      if (currentChunk.trim()) {
-        textChunks.push(currentChunk.trim());
+      // We must use FFmpeg concat demuxer to safely merge MP3s without breaking ID3 tags
+      const listPath = path.join(TEMP_DIR, `list_${tempId}.txt`);
+      let listContent = '';
+      const tempFiles = [];
+
+      for (let i = 0; i < results.length; i++) {
+          const chunkPath = path.join(TEMP_DIR, `chunk_${tempId}_${i}.mp3`);
+          fs.writeFileSync(chunkPath, Buffer.from(results[i].base64, 'base64'));
+          // Use forward slashes for FFmpeg compatibility on all OS
+          listContent += `file '${chunkPath.replace(/\\/g, '/')}'\n`;
+          tempFiles.push(chunkPath);
       }
       
-      if (textChunks.length === 0) textChunks.push("Empty message");
-
-      // 4. Synthesize chunks and concatenate MP3 buffers
-      let finalAudioBuffer: Buffer = Buffer.alloc(0);
-
-      try {
-          if (isUrdu) {
-              console.log(`[Voice] Forced Google TTS for Urdu on Datacenter...`);
-              const { getAllAudioBase64 } = await import('google-tts-api');
-              const results = await getAllAudioBase64(cleanText, {
-                  lang: 'ur',
-                  slow: false,
-                  host: 'https://translate.google.com',
-                  splitPunct: ',.?'
-              });
-              
-              for (const res of results) {
-                  finalAudioBuffer = Buffer.concat([finalAudioBuffer, Buffer.from(res.base64, 'base64')]);
-              }
-              console.log(`[Voice] Google TTS Fallback generated ${finalAudioBuffer.byteLength} bytes.`);
-          } else {
-              for (let index = 0; index < textChunks.length; index++) {
-                const chunk = textChunks[index];
-                if (!chunk.trim()) continue;
-                
-                console.log(`[Voice] Synthesizing chunk ${index + 1}/${textChunks.length}: "${chunk.substring(0, 50)}..."`);
-                const tts = new UniversalEdgeTTS(chunk, voice);
-                const audioData: any = await tts.synthesize();
-                
-                if (!audioData) {
-                  throw new Error(`Edge TTS returned no audio data for chunk ${index + 1}.`);
-                }
-
-                let buffer: Buffer;
-                if (audioData.audio && typeof audioData.audio.arrayBuffer === 'function') {
-                  buffer = Buffer.from(await audioData.audio.arrayBuffer());
-                } else if (Buffer.isBuffer(audioData)) {
-                  buffer = audioData;
-                } else if (audioData instanceof Uint8Array) {
-                  buffer = Buffer.from(audioData);
-                } else if (audioData.data && (audioData.data instanceof Uint8Array || Array.isArray(audioData.data))) {
-                  buffer = Buffer.from(audioData.data);
-                } else {
-                  throw new Error("Unsupported audio data format from Edge TTS");
-                }
-                
-                finalAudioBuffer = Buffer.concat([finalAudioBuffer, buffer]);
-              }
-          }
-      } catch (err: any) {
-          console.error(`[Voice] TTS Pipeline Failed: ${err.message}`);
-          throw err;
-      }
-
-      console.log(`[Voice] Total MP3 generated: ${finalAudioBuffer.byteLength} bytes`);
-      if (finalAudioBuffer.byteLength === 0) {
-          throw new Error("Final synthesized MP3 buffer is empty (0 bytes).");
-      }
-
-      fs.writeFileSync(mp3Path, finalAudioBuffer);
-
-      // 5. Convert concatenated MP3 to Opus OGG (WhatsApp Requirement)
+      fs.writeFileSync(listPath, listContent);
+      
       return new Promise((resolve, reject) => {
-        ffmpeg(mp3Path)
-          // STRICT WHATSAPP PTT REQUIREMENTS
-          .inputFormat('mp3')
-          .audioCodec('libopus')
-          .audioBitrate('32k')
-          .audioChannels(1)
-          .audioFrequency(48000)
-          .outputOptions(['-avoid_negative_ts make_zero'])
-          .toFormat('ogg')
-          .on('start', (commandLine) => {
-             console.log(`[Voice] FFmpeg started: ${commandLine}`);
-          })
-          .on('end', () => {
-             console.log(`[Voice] FFmpeg OGG conversion complete.`);
-             const oggBuffer = fs.readFileSync(oggPath);
-             console.log(`[Voice] Final OGG Buffer size: ${oggBuffer.byteLength} bytes`);
-             
-             if (oggBuffer.byteLength < 500) {
-                 console.warn(`[Voice] WARNING: Generated OGG file is suspiciously small (${oggBuffer.byteLength} bytes). It might be silent/0:00.`);
-             }
-
-             // Cleanup
-             try {
-               if (fs.existsSync(mp3Path)) fs.unlinkSync(mp3Path);
-               if (fs.existsSync(oggPath)) fs.unlinkSync(oggPath);
-             } catch (e) {}
-             
-             resolve(oggBuffer);
-          })
-          .on('error', (err, stdout, stderr) => {
-            console.error('[Voice] FFmpeg Conversion Error:', err.message);
-            console.error('[Voice] FFmpeg Stderr:', stderr);
-            reject(err);
-          })
-          .save(oggPath);
+          ffmpeg()
+            .input(listPath)
+            .inputOptions(['-f concat', '-safe 0'])
+            .audioCodec('libopus')
+            .audioBitrate('32k')
+            .audioChannels(1)
+            .audioFrequency(48000)
+            .outputOptions(['-avoid_negative_ts make_zero'])
+            .toFormat('ogg')
+            .on('end', () => {
+               console.log(`[Voice] Google TTS Concatenation & Conversion complete.`);
+               const oggBuffer = fs.readFileSync(oggPath);
+               // Cleanup
+               try {
+                 if (fs.existsSync(oggPath)) fs.unlinkSync(oggPath);
+                 if (fs.existsSync(listPath)) fs.unlinkSync(listPath);
+                 for (const file of tempFiles) {
+                     if (fs.existsSync(file)) fs.unlinkSync(file);
+                 }
+               } catch (e) {}
+               resolve(oggBuffer);
+            })
+            .on('error', (err) => {
+              console.error('[Voice] FFmpeg Concat Error:', err.message);
+              reject(err);
+            })
+            .save(oggPath);
       });
     } catch (error) {
       console.error('[Voice] TTS Pipeline Fatal Error:', error);
       // Ensure cleanup if error happens
       try {
-        if (fs.existsSync(mp3Path)) fs.unlinkSync(mp3Path);
         if (fs.existsSync(oggPath)) fs.unlinkSync(oggPath);
       } catch (e) {}
       throw error;
