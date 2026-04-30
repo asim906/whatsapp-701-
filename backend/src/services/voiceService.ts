@@ -149,7 +149,12 @@ export class VoiceService {
             .toFormat('ogg')
             .on('end', () => {
                console.log(`[Voice] FFmpeg OGG conversion complete.`);
-               const oggBuffer = fs.readFileSync(oggPath);
+               let oggBuffer: Buffer;
+               try {
+                   oggBuffer = fs.readFileSync(oggPath);
+               } catch (e) {
+                   return reject(new Error("Failed to read generated OGG file"));
+               }
                
                // Cleanup
                try {
@@ -158,6 +163,12 @@ export class VoiceService {
                  if (fs.existsSync(oggPath)) fs.unlinkSync(oggPath);
                } catch (e) {}
                
+               // CRITICAL: Detect 0:00 duration bugs and trigger Roman Urdu Fallback
+               if (oggBuffer.byteLength < 1500) {
+                   console.error(`[Voice] 🚨 CRITICAL: Generated OGG file is empty or silent (${oggBuffer.byteLength} bytes). Triggering fallback...`);
+                   return reject(new Error("TTS_SILENCE_DETECTED"));
+               }
+
                resolve(oggBuffer);
             })
             .on('error', (err) => {

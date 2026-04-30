@@ -53,28 +53,65 @@ export const generateAIResponse = async (
             if (isCallMode) {
                 console.log(`[${userId}] 🎤 Synthesizing voice response for WhatsApp...`);
                 let audioBuffer: Buffer | null = null;
+                let usedRomanFallback = false;
                 
                 try {
                     audioBuffer = await VoiceService.textToSpeech(finalText, settings.language === 'urdu' ? 'ur' : 'en', settings);
-                } catch (voiceErr) {
-                    console.error(`[${userId}] ⚠️ First TTS attempt failed, retrying once...`, voiceErr);
-                    try {
-                        audioBuffer = await VoiceService.textToSpeech(finalText, settings.language === 'urdu' ? 'ur' : 'en', settings);
-                    } catch (retryErr) {
-                        console.error(`[${userId}] ❌ Voice synthesis failed after retry:`, retryErr);
+                } catch (voiceErr: any) {
+                    console.error(`[${userId}] ⚠️ Native TTS attempt failed: ${voiceErr.message}. Initiating fallback logic...`);
+                    
+                    // IF URDU FAILED -> TRANSLITERATE TO ROMAN URDU & USE ENGLISH TTS
+                    if (settings.language === 'urdu' || /[\u0600-\u06FF]/.test(finalText)) {
+                        console.log(`[${userId}] 🔄 Converting Urdu to Roman Urdu for Voice Fallback...`);
+                        try {
+                            const apiKey = settings.openAiKey || settings.openRouterKey || process.env.GROQ_API_KEY;
+                            let romanText = finalText;
+                            
+                            // Fast LLM call to transliterate
+                            if (apiKey && apiKey.startsWith('gsk_')) {
+                                const { default: Groq } = await import('groq-sdk');
+                                const groq = new Groq({ apiKey });
+                                const response = await groq.chat.completions.create({
+                                    messages: [{ role: 'user', content: 'Transliterate the following Urdu text into Roman English (Latin alphabet). Return ONLY the pure transliterated string without any quotes or explanations:\n\n' + finalText }],
+                                    model: 'llama3-8b-8192'
+                                });
+                                romanText = response.choices[0]?.message?.content?.trim() || finalText;
+                            } else if (apiKey && apiKey.startsWith('sk-')) {
+                                const { default: OpenAI } = await import('openai');
+                                const openai = new OpenAI({ apiKey });
+                                const response = await openai.chat.completions.create({
+                                    messages: [{ role: 'user', content: 'Transliterate the following Urdu text into Roman English (Latin alphabet). Return ONLY the pure transliterated string without any quotes or explanations:\n\n' + finalText }],
+                                    model: 'gpt-4o-mini' // Fast fallback
+                                });
+                                romanText = response.choices[0]?.message?.content?.trim() || finalText;
+                            }
+
+                            console.log(`[${userId}] 🗣️ Roman Urdu generated: "${romanText.substring(0, 50)}..."`);
+                            
+                            // Use English TTS engine for Roman Urdu
+                            audioBuffer = await VoiceService.textToSpeech(romanText, 'en', settings);
+                            usedRomanFallback = true;
+                        } catch (fallbackErr: any) {
+                            console.error(`[${userId}] ❌ Roman Urdu Fallback failed:`, fallbackErr.message);
+                        }
+                    } else {
+                        // Standard English Retry
+                        try {
+                            audioBuffer = await VoiceService.textToSpeech(finalText, 'en', settings);
+                        } catch (retryErr: any) {
+                            console.error(`[${userId}] ❌ Voice synthesis failed after standard retry:`, retryErr.message);
+                        }
                     }
                 }
 
                 if (audioBuffer) {
                     await sock.sendMessage(remoteJid, { audio: audioBuffer, ptt: true, mimetype: 'audio/ogg; codecs=opus' });
-                    // Convert to base64 for Dashboard UI - EXACT MIME TYPE is critical for Chrome/Edge to parse duration
                     mediaData = `data:audio/ogg; codecs=opus;base64,${audioBuffer.toString('base64')}`;
-                    console.log(`[${userId}] ✅ Voice response sent to WhatsApp.`);
+                    console.log(`[${userId}] ✅ Voice response sent to WhatsApp ${usedRomanFallback ? '(via Roman Urdu Fallback)' : ''}.`);
                 } else {
-                    console.log(`[${userId}] ⚠️ Falling back to text response due to TTS failure.`);
+                    console.log(`[${userId}] ⚠️ Falling back to pure text response due to complete TTS failure.`);
                     await sock.sendMessage(remoteJid, { text: finalText });
-                    // Update payload type to text since we fell back
-                    isCallMode = false; // This is a safe local override so outPayload below knows it's text
+                    isCallMode = false; 
                 }
             } else {
                 await sock.sendMessage(remoteJid, { text: finalText });
