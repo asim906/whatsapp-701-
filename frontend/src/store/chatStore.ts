@@ -28,6 +28,7 @@ interface ChatState {
   qrCode: string;
   isConnecting: boolean;
   leads: any[];
+  socket: any | null;
   
   // Actions
   setChats: (chats: Chat[]) => void;
@@ -37,6 +38,7 @@ interface ChatState {
   refreshLeads: () => Promise<void>;
   setQrCode: (qr: string) => void;
   setConnecting: (val: boolean) => void;
+  setSocket: (socket: any) => void;
 }
 
 /**
@@ -54,10 +56,12 @@ export const useChatStore = create<ChatState>((set, get) => ({
   qrCode: "",
   isConnecting: false,
   leads: [],
+  socket: null,
 
   setChats: (chats) => set({ chats }),
   setQrCode: (qrCode) => set({ qrCode }),
   setConnecting: (isConnecting) => set({ isConnecting }),
+  setSocket: (socket) => set({ socket }),
 
   refreshLeads: async () => {
     const user = auth.currentUser;

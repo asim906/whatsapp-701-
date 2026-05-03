@@ -16,6 +16,7 @@ export function SyncEngine() {
   const refreshChats = useChatStore(state => state.refreshChats);
   const setQrCode = useChatStore(state => state.setQrCode);
   const setConnecting = useChatStore(state => state.setConnecting);
+  const setSocket = useChatStore(state => state.setSocket);
 
   const refreshLeads = useChatStore(state => state.refreshLeads);
 
@@ -29,6 +30,7 @@ export function SyncEngine() {
     refreshLeads();
 
     const socket = io(BACKEND_URL, { transports: ["websocket", "polling"] });
+    setSocket(socket);
 
     socket.on("connect", () => {
       console.log(`[SyncEngine] ✅ Connected to backend. Registering user: ${user.uid}`);
@@ -91,6 +93,7 @@ export function SyncEngine() {
     return () => {
       console.log("[SyncEngine] Cleaning up socket connection.");
       socket.disconnect();
+      setSocket(null);
     };
   }, [user, addMessage, refreshChats, setQrCode, setConnecting]);
 
