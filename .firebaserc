@@ -1,0 +1,13 @@
+{
+  "projects": {},
+  "targets": {
+    "whatsapp-ai-e0b6e": {
+      "database": {
+        "whatsapp-ai-e0b6e-default-rtdb": [
+          "whatsapp-ai-e0b6e-default-rtdb"
+        ]
+      }
+    }
+  },
+  "etags": {}
+}

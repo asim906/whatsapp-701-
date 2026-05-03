@@ -1,0 +1,12 @@
+{
+  "database": [
+    {
+      "rules": "database.rules.json",
+      "instance": "whatsapp-ai-e0b6e-default-rtdb",
+      "target": "whatsapp-ai-e0b6e-default-rtdb"
+    }
+  ],
+  "firestore": {
+    "rules": "firestore.rules"
+  }
+}

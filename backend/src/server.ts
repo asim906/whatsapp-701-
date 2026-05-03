@@ -329,17 +329,18 @@ app.post('/api/whatsapp/call/end', (req, res) => {
 io.on('connection', (socket) => {
   console.log(`Socket connected: ${socket.id}`);
   
-  // High-accuracy registration
-  socket.on('register_user', (userId) => {
-    activeUsers.set(userId, socket.id);
-    socket.join(`user_${userId}`);
-    console.log(`[Socket] 👤 User ${userId} registered with socket ${socket.id}`);
-    
-    // Check if WhatsApp is already ready
-    if (activeSockets[userId]) {
-      socket.emit('whatsapp_ready', { userId });
-    }
-  });
+    // High-accuracy registration
+    socket.on('register_user', async (userId) => {
+      activeUsers.set(userId, socket.id);
+      socket.join(`user_${userId}`);
+      console.log(`[Socket] 👤 User ${userId} registered with socket ${socket.id}`);
+      
+      // Check if WhatsApp is truly connected in Firestore
+      const userDoc = await adminDb.collection('users').doc(userId).get();
+      if (userDoc.exists && userDoc.data()?.whatsappConnected === true) {
+        socket.emit('whatsapp_ready', { userId });
+      }
+    });
 
   // Legacy room joining (fallback)
   socket.on('join_user_room', (userId) => {
@@ -360,9 +361,11 @@ io.on('connection', (socket) => {
 });
 
 const PORT = process.env.PORT || 3001;
-server.listen(PORT, () => {
-  console.log(`🚀 WA AI Backend is running on port ${PORT}`);
+console.log(`[Config] Starting server. PORT env: ${process.env.PORT || 'undefined (defaulting to 3001)'}`);
+server.listen(Number(PORT), '0.0.0.0', () => {
+  console.log(`🚀 WA AI Backend is running on 0.0.0.0:${PORT}`);
 
+  /*
   // Auto-restore all saved WhatsApp sessions on startup
   const sessionsDir = path.join(__dirname, '../sessions');
   if (fs.existsSync(sessionsDir)) {
@@ -376,4 +379,6 @@ server.listen(PORT, () => {
       });
     }
   }
+  */
+  console.log("System ready - Waiting for user connections.");
 });

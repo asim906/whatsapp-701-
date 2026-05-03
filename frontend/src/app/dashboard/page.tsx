@@ -8,7 +8,7 @@ import { doc, getDoc, onSnapshot, setDoc } from "firebase/firestore";
 import { useChatStore } from "@/store/chatStore";
 import { QRCodeSVG } from "qrcode.react";
 
-const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001";
+const BACKEND_URL = "https://whatsapp-701-production.up.railway.app";
 
 export default function DashboardPage() {
   const [user] = useAuthState(auth);
@@ -16,11 +16,56 @@ export default function DashboardPage() {
   const [realStats, setRealStats] = useState({ messages: 0, aiResponses: 0, humanResponses: 0, leads: 0 });
   const [loading, setLoading] = useState(true);
   
-  // Zustand Global State
-  const qrCode = useChatStore(state => state.qrCode);
-  const connecting = useChatStore(state => state.isConnecting);
-  const setConnecting = useChatStore(state => state.setConnecting);
-  const setQrCode = useChatStore(state => state.setQrCode);
+  const [qrCode, setQrCode] = useState("");
+  const [connecting, setConnecting] = useState(false);
+  const [qrExpired, setQrExpired] = useState(false);
+  
+  useEffect(() => {
+    if (!user) return;
+
+    const socket = useChatStore.getState().socket;
+    if (socket) {
+      socket.on('whatsapp_qr', (data: { qr: string }) => {
+        setQrCode(data.qr);
+        setConnecting(true);
+        setQrExpired(false);
+      });
+
+      socket.on('whatsapp_ready', () => {
+        setConnecting(false);
+        setQrCode("");
+        setQrExpired(false);
+        // Refresh userData to show stats
+        getDoc(doc(db, "users", user.uid)).then(snap => {
+           if (snap.exists()) setUserData(snap.data());
+        });
+      });
+
+      socket.on('whatsapp_qr_expired', () => {
+        setQrExpired(true);
+        setConnecting(false);
+      });
+
+      socket.on('whatsapp_disconnected', () => {
+        setConnecting(false);
+        setQrCode("");
+        setQrExpired(false);
+        // Refresh userData
+        getDoc(doc(db, "users", user.uid)).then(snap => {
+           if (snap.exists()) setUserData(snap.data());
+        });
+      });
+    }
+
+    return () => {
+      if (socket) {
+        socket.off('whatsapp_qr');
+        socket.off('whatsapp_ready');
+        socket.off('whatsapp_qr_expired');
+        socket.off('whatsapp_disconnected');
+      }
+    };
+  }, [user]);
 
   const fetchRealStats = async () => {
     if (!user) return;
@@ -47,9 +92,8 @@ export default function DashboardPage() {
       setLoading(false);
     });
 
-    // Initial fetch and set interval for real-time dashboard updates
     fetchRealStats();
-    const interval = setInterval(fetchRealStats, 10000); // refresh every 10s
+    const interval = setInterval(fetchRealStats, 10000);
 
     return () => {
       unsub();
@@ -57,26 +101,11 @@ export default function DashboardPage() {
     };
   }, [user]);
 
-  // Auto-resume WhatsApp session when dashboard loads (after backend restart)
-  useEffect(() => {
-    if (!user || !userData) return;
-    if (userData.whatsappConnected === true) {
-      fetch(`${BACKEND_URL}/api/whatsapp/start`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId: user.uid }),
-      }).then(() => {
-        console.log("WhatsApp session resume requested");
-      }).catch((err) => {
-        console.warn("Could not auto-resume WhatsApp:", err);
-      });
-    }
-  }, [user, userData?.whatsappConnected]);
-
   const handleConnect = async () => {
     if (!user) return;
     setConnecting(true);
     setQrCode("");
+    setQrExpired(false);
 
     try {
       await fetch(`${BACKEND_URL}/api/whatsapp/start`, {
@@ -112,9 +141,13 @@ export default function DashboardPage() {
           <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mb-6">
             <QrCode className="w-10 h-10 text-primary" />
           </div>
-          <h2 className="text-2xl font-bold text-white mb-3">Connect WhatsApp</h2>
+          <h2 className="text-2xl font-bold text-white mb-3">
+            {qrExpired ? "QR Code Expired" : "Connect WhatsApp"}
+          </h2>
           <p className="text-foreground/60 text-center max-w-md mb-8">
-            Scan the QR code with your WhatsApp app to link your account. Your connection is secure and your data remains isolated.
+            {qrExpired 
+              ? "The QR code has expired due to inactivity. Please regenerate it to connect." 
+              : "Scan the QR code with your WhatsApp app to link your account. Your connection is secure."}
           </p>
 
           {connecting ? (
@@ -135,7 +168,7 @@ export default function DashboardPage() {
               onClick={handleConnect}
               className="btn-primary px-8 py-4 rounded-full font-bold text-lg hover-lift shadow-lg shadow-primary/25"
             >
-              Generate QR Code
+              {qrExpired ? "Regenerate QR Code" : "Generate QR Code"}
             </button>
           )}
         </div>

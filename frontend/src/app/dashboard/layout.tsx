@@ -22,7 +22,7 @@ import { onAuthStateChanged, signOut } from "firebase/auth";
 import { doc, getDoc, onSnapshot } from "firebase/firestore";
 import { SyncEngine } from "@/components/SyncEngine";
 
-const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001";
+const BACKEND_URL = "https://whatsapp-701-production.up.railway.app";
 
 export default function DashboardLayout({
   children,

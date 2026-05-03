@@ -19,6 +19,8 @@ import { Server } from 'socket.io';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+import { adminDb } from '../config/firebase-admin.js';
+
 // We store sessions per user
 const sessionsDir = path.join(__dirname, '../../sessions');
 if (!fs.existsSync(sessionsDir)) {
@@ -43,25 +45,19 @@ export type ChatStore = {
 export const messageStores: { [userId: string]: MessageStore } = {};
 export const chatStores: { [userId: string]: ChatStore } = {};
 export const activeSockets: { [userId: string]: WASocket } = {};
-const activeSessions: { [userId: string]: boolean } = {};
 
 export const initializeWhatsApp = async (userId: string, io: Server) => {
-    if (activeSessions[userId]) {
-        console.log(`WhatsApp session for ${userId} is already active.`);
-        io.to(`user_${userId}`).emit('whatsapp_ready', { userId });
-        return;
-    }
-
+    // DO NOT emit whatsapp_ready here. Only emit it when connection is truly OPEN.
     const sessionPath = path.join(sessionsDir, `session_${userId}`);
     
     const { state, saveCreds } = await useMultiFileAuthState(sessionPath);
     const { version, isLatest } = await fetchLatestBaileysVersion();
     
-    console.log(`[${userId}] Using WA v${version.join('.')}, isLatest: ${isLatest}`);
+    console.log(`[${userId}] Initializing WA v${version.join('.')}, isLatest: ${isLatest}`);
 
     // Initialize our own stores for this user
-    messageStores[userId] = {};
-    chatStores[userId] = {};
+    if (!messageStores[userId]) messageStores[userId] = {};
+    if (!chatStores[userId]) chatStores[userId] = {};
 
     const sock = makeWASocket({
         version,
@@ -70,7 +66,6 @@ export const initializeWhatsApp = async (userId: string, io: Server) => {
         auth: state,
         generateHighQualityLinkPreview: true,
         syncFullHistory: false,
-        // Provide getMessage from our manual store for retry support
         getMessage: async (key) => {
             const jid = key.remoteJid!;
             const msgs = messageStores[userId]?.[jid] || [];
@@ -186,32 +181,44 @@ export const initializeWhatsApp = async (userId: string, io: Server) => {
         }
     });
 
-    sock.ev.on('connection.update', (update) => {
+    sock.ev.on('connection.update', async (update) => {
         const { connection, lastDisconnect, qr } = update;
         
         if (qr) {
-            console.log(`[${userId}] QR ready — emitting to frontend`);
+            console.log(`[${userId}] New QR generated — emitting to frontend`);
             io.to(`user_${userId}`).emit('whatsapp_qr', { qr });
         }
 
         if (connection === 'close') {
-            const shouldReconnect = (lastDisconnect?.error as Boom)?.output?.statusCode !== DisconnectReason.loggedOut;
-            console.log(`[${userId}] Connection closed. Reconnecting: ${shouldReconnect}`);
+            const statusCode = (lastDisconnect?.error as Boom)?.output?.statusCode;
+            const shouldReconnect = statusCode !== DisconnectReason.loggedOut;
             
-            activeSessions[userId] = false;
+            console.log(`[${userId}] Connection closed. Status: ${statusCode}. Reconnecting: ${shouldReconnect}`);
+            
             delete activeSockets[userId];
             
-            if (shouldReconnect) {
-                setTimeout(() => initializeWhatsApp(userId, io), 3000);
-            } else {
+            if (!shouldReconnect) {
                 console.log(`[${userId}] Logged out. Deleting session.`);
-                fs.rmSync(sessionPath, { recursive: true, force: true });
+                if (fs.existsSync(sessionPath)) {
+                    fs.rmSync(sessionPath, { recursive: true, force: true });
+                }
+                await adminDb.collection('users').doc(userId).update({ whatsappConnected: false });
                 io.to(`user_${userId}`).emit('whatsapp_disconnected');
+            } else {
+                // If timed out or just closed, don't auto-reconnect if it's the QR stage
+                // but for existing connections, we should try once.
+                const wasConnected = (await adminDb.collection('users').doc(userId).get()).data()?.whatsappConnected;
+                if (wasConnected) {
+                    setTimeout(() => initializeWhatsApp(userId, io), 3000);
+                } else {
+                    io.to(`user_${userId}`).emit('whatsapp_qr_expired');
+                }
             }
         } else if (connection === 'open') {
-            console.log(`[${userId}] Connected! 24/7 Engine active.`);
-            activeSessions[userId] = true;
+            console.log(`[${userId}] Connected! Session established.`);
+            await adminDb.collection('users').doc(userId).update({ whatsappConnected: true });
             io.to(`user_${userId}`).emit('whatsapp_ready', { userId });
         }
     });
 };
+

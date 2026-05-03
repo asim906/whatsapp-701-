@@ -8,7 +8,7 @@ import io from 'socket.io-client';
 import { useChatStore } from '@/store/chatStore';
 import { performCatchupSync, syncInitialChatsFromServer } from '@/lib/syncManager';
 
-const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001";
+const BACKEND_URL = "https://whatsapp-701-production.up.railway.app";
 
 export function SyncEngine() {
   const [user] = useAuthState(auth);
@@ -28,7 +28,7 @@ export function SyncEngine() {
     refreshChats();
     refreshLeads();
 
-    const socket = io(BACKEND_URL, { transports: ["websocket"] });
+    const socket = io(BACKEND_URL, { transports: ["websocket", "polling"] });
 
     socket.on("connect", () => {
       console.log(`[SyncEngine] ✅ Connected to backend. Registering user: ${user.uid}`);

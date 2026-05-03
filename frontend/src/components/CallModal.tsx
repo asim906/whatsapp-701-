@@ -38,7 +38,7 @@ export default function CallModal({ isOpen, onClose, contactName, contactJid, us
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       
       if (!socketRef.current) {
-        const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001";
+        const backendUrl = "https://whatsapp-701-production.up.railway.app";
         socketRef.current = io(backendUrl);
       
         socketRef.current.on("connect", () => {

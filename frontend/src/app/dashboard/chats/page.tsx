@@ -7,7 +7,7 @@ import { auth } from "@/lib/firebase";
 import { useChatStore } from "@/store/chatStore";
 import CallModal from "@/components/CallModal";
 
-const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001";
+const BACKEND_URL = "https://whatsapp-701-production.up.railway.app";
 
 export default function ChatsPage() {
   const [user] = useAuthState(auth);

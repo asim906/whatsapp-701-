@@ -1,6 +1,6 @@
 import { saveMessageLocal, saveLeadLocal, saveChatsBulkLocal } from './indexeddb';
 
-const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001";
+const BACKEND_URL = "https://whatsapp-701-production.up.railway.app";
 
 export async function syncInitialChatsFromServer(userId: string) {
   const url = `${BACKEND_URL}/api/whatsapp/chats/${userId}`;

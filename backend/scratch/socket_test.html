@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Socket Test</title>
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+</head>
+<body>
+    <h1>Socket Connection Test</h1>
+    <div id="status">Connecting...</div>
+    <script>
+        const socket = io("https://whatsapp-701-production.up.railway.app", {
+            transports: ["polling", "websocket"]
+        });
+
+        socket.on("connect", () => {
+            document.getElementById("status").innerText = "Connected! ID: " + socket.id;
+            console.log("Connected!", socket.id);
+        });
+
+        socket.on("connect_error", (err) => {
+            document.getElementById("status").innerText = "Error: " + err.message;
+            console.error("Error:", err);
+        });
+    </script>
+</body>
+</html>

@@ -5,7 +5,7 @@ import { BarChart3, TrendingUp, TrendingDown, MessageSquare, Bot, Users } from "
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "@/lib/firebase";
 
-const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001";
+const BACKEND_URL = "https://whatsapp-701-production.up.railway.app";
 
 export default function AnalyticsPage() {
   const [user] = useAuthState(auth);

@@ -26,6 +26,7 @@
     "google-translate-tts": "^0.4.0-dev",
     "google-tts-api": "^2.0.2",
     "groq-sdk": "^1.1.2",
+    "gtts": "^0.2.1",
     "jsonwebtoken": "^9.0.3",
     "lucide-react": "^1.8.0",
     "openai": "^6.34.0",
