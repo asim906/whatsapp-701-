@@ -46,14 +46,20 @@ export default function DashboardPage() {
         setConnecting(false);
       });
 
+      socket.on('connection_status', (data: { isConnected: boolean }) => {
+        console.log(`[Socket] 🔄 Connection Status Update: ${data.isConnected}`);
+        setUserData((prev: any) => ({ ...prev, whatsappConnected: data.isConnected }));
+        if (!data.isConnected) {
+          setConnecting(false);
+          setQrCode("");
+        }
+      });
+
       socket.on('whatsapp_disconnected', () => {
         setConnecting(false);
         setQrCode("");
         setQrExpired(false);
-        // Refresh userData
-        getDoc(doc(db, "users", user.uid)).then(snap => {
-           if (snap.exists()) setUserData(snap.data());
-        });
+        setUserData((prev: any) => ({ ...prev, whatsappConnected: false }));
       });
     }
 

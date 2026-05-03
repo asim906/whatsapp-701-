@@ -217,9 +217,12 @@ export const initializeWhatsApp = async (userId: string, io: Server) => {
                     }
                     await adminDb.collection('users').doc(userId).update({ whatsappConnected: false });
                     io.to(`user_${userId}`).emit('whatsapp_disconnected');
+                    io.to(`user_${userId}`).emit('connection_status', { isConnected: false });
                 } else {
                     console.log(`[${userId}] Session expired or timed out.`);
+                    await adminDb.collection('users').doc(userId).update({ whatsappConnected: false });
                     io.to(`user_${userId}`).emit('whatsapp_qr_expired');
+                    io.to(`user_${userId}`).emit('connection_status', { isConnected: false });
                 }
             } else {
                 // If it's a normal network drop, try to reconnect
@@ -230,6 +233,7 @@ export const initializeWhatsApp = async (userId: string, io: Server) => {
             qrCount = 0; // Reset count on success
             await adminDb.collection('users').doc(userId).update({ whatsappConnected: true });
             io.to(`user_${userId}`).emit('whatsapp_ready', { userId });
+            io.to(`user_${userId}`).emit('connection_status', { isConnected: true });
         }
     });
 };
