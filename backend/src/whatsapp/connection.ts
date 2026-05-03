@@ -203,26 +203,38 @@ export const initializeWhatsApp = async (userId: string, io: Server) => {
 
         if (connection === 'close') {
             const statusCode = (lastDisconnect?.error as Boom)?.output?.statusCode;
-            const shouldReconnect = statusCode !== DisconnectReason.loggedOut && qrCount <= MAX_QR_RETRIES;
+            // List of codes that mean we are definitely NOT connected anymore and cannot auto-reconnect
+            const isPermanentDisconnect = [
+                DisconnectReason.loggedOut,
+                DisconnectReason.forbidden,
+                401, // Unauthorized
+                403  // Forbidden
+            ].includes(statusCode);
+
+            const shouldReconnect = !isPermanentDisconnect && qrCount <= MAX_QR_RETRIES;
             
             console.log(`[${userId}] Connection closed. Status: ${statusCode}. Reconnecting: ${shouldReconnect}`);
             
             delete activeSockets[userId];
             
             if (!shouldReconnect) {
-                if (statusCode === DisconnectReason.loggedOut) {
-                    console.log(`[${userId}] Logged out. Deleting session.`);
+                console.log(`[${userId}] Permanent disconnect detected. Cleaning up state.`);
+                
+                // Force state update in DB
+                await adminDb.collection('users').doc(userId).update({ whatsappConnected: false });
+                
+                // User-requested event name
+                io.to(`user_${userId}`).emit('whatsapp_status_update', { status: 'disconnected' });
+                
+                // Compatibility events
+                io.to(`user_${userId}`).emit('whatsapp_disconnected');
+                io.to(`user_${userId}`).emit('connection_status', { isConnected: false });
+
+                if (isPermanentDisconnect) {
+                    console.log(`[${userId}] Deleting session files...`);
                     if (fs.existsSync(sessionPath)) {
                         fs.rmSync(sessionPath, { recursive: true, force: true });
                     }
-                    await adminDb.collection('users').doc(userId).update({ whatsappConnected: false });
-                    io.to(`user_${userId}`).emit('whatsapp_disconnected');
-                    io.to(`user_${userId}`).emit('connection_status', { isConnected: false });
-                } else {
-                    console.log(`[${userId}] Session expired or timed out.`);
-                    await adminDb.collection('users').doc(userId).update({ whatsappConnected: false });
-                    io.to(`user_${userId}`).emit('whatsapp_qr_expired');
-                    io.to(`user_${userId}`).emit('connection_status', { isConnected: false });
                 }
             } else {
                 // If it's a normal network drop, try to reconnect

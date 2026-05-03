@@ -76,7 +76,6 @@ export function SyncEngine() {
       console.log("[SyncEngine] ✨ WhatsApp instance ready for user:", user.uid);
       setQrCode("");
       setConnecting(false);
-      await setDoc(doc(db, "users", user.uid), { whatsappConnected: true }, { merge: true });
       
       await syncInitialChatsFromServer(user.uid);
       refreshChats();

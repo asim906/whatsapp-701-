@@ -19,6 +19,7 @@ export default function DashboardPage() {
   const [qrCode, setQrCode] = useState("");
   const [connecting, setConnecting] = useState(false);
   const [qrExpired, setQrExpired] = useState(false);
+  const [localDisconnect, setLocalDisconnect] = useState(false);
   
   useEffect(() => {
     if (!user) return;
@@ -29,37 +30,42 @@ export default function DashboardPage() {
         setQrCode(data.qr);
         setConnecting(true);
         setQrExpired(false);
+        setLocalDisconnect(false); // Reset on new QR activity
       });
 
       socket.on('whatsapp_ready', () => {
         setConnecting(false);
         setQrCode("");
         setQrExpired(false);
-        // Refresh userData to show stats
-        getDoc(doc(db, "users", user.uid)).then(snap => {
-           if (snap.exists()) setUserData(snap.data());
-        });
+        setLocalDisconnect(false); // Definitely connected
       });
 
-      socket.on('whatsapp_qr_expired', () => {
-        setQrExpired(true);
-        setConnecting(false);
+      socket.on('whatsapp_status_update', (data: { status: string }) => {
+        console.log(`[Socket] 📊 Status Update: ${data.status}`);
+        if (data.status === 'disconnected') {
+          setLocalDisconnect(true);
+          setConnecting(false);
+          setQrCode("");
+          setQrExpired(false);
+        }
       });
 
       socket.on('connection_status', (data: { isConnected: boolean }) => {
         console.log(`[Socket] 🔄 Connection Status Update: ${data.isConnected}`);
-        setUserData((prev: any) => ({ ...prev, whatsappConnected: data.isConnected }));
         if (!data.isConnected) {
+          setLocalDisconnect(true);
           setConnecting(false);
           setQrCode("");
+        } else {
+          setLocalDisconnect(false);
         }
       });
 
       socket.on('whatsapp_disconnected', () => {
+        setLocalDisconnect(true);
         setConnecting(false);
         setQrCode("");
         setQrExpired(false);
-        setUserData((prev: any) => ({ ...prev, whatsappConnected: false }));
       });
     }
 
@@ -69,6 +75,8 @@ export default function DashboardPage() {
         socket.off('whatsapp_ready');
         socket.off('whatsapp_qr_expired');
         socket.off('whatsapp_disconnected');
+        socket.off('whatsapp_status_update');
+        socket.off('connection_status');
       }
     };
   }, [user]);
@@ -94,6 +102,10 @@ export default function DashboardPage() {
       if (docSnap.exists()) {
         const data = docSnap.data();
         setUserData(data);
+        // If Firestore now says disconnected, we can clear the local override
+        if (data.whatsappConnected === false) {
+          setLocalDisconnect(false);
+        }
       }
       setLoading(false);
     });
@@ -112,6 +124,7 @@ export default function DashboardPage() {
     setConnecting(true);
     setQrCode("");
     setQrExpired(false);
+    setLocalDisconnect(false);
 
     try {
       await fetch(`${BACKEND_URL}/api/whatsapp/start`, {
@@ -127,7 +140,7 @@ export default function DashboardPage() {
 
   if (loading) return <div className="text-foreground/50">Loading Dashboard...</div>;
 
-  const isConnected = userData?.whatsappConnected === true;
+  const isConnected = userData?.whatsappConnected === true && !localDisconnect;
   const stats = realStats;
   const hasData = stats.messages > 0;
 
