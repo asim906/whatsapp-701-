@@ -8,3 +8,9 @@ build/
 *.log
 serviceAccountKey.json
 sessions/
+backend/sessions/
+backend/temp_audio/
+temp_audio/
+*.mp3
+*.wav
+*.ogg

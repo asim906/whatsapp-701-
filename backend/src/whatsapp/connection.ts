@@ -181,41 +181,53 @@ export const initializeWhatsApp = async (userId: string, io: Server) => {
         }
     });
 
+    let qrCount = 0;
+    const MAX_QR_RETRIES = 3;
+
     sock.ev.on('connection.update', async (update) => {
         const { connection, lastDisconnect, qr } = update;
         
         if (qr) {
-            console.log(`[${userId}] New QR generated — emitting to frontend`);
+            qrCount++;
+            console.log(`[${userId}] QR generated (${qrCount}/${MAX_QR_RETRIES}) — emitting to frontend`);
+            
+            if (qrCount > MAX_QR_RETRIES) {
+                console.log(`[${userId}] ⚠️ QR generation limit reached. Expiring session.`);
+                sock.logout(); // This will trigger connection 'close'
+                io.to(`user_${userId}`).emit('whatsapp_qr_expired');
+                return;
+            }
+            
             io.to(`user_${userId}`).emit('whatsapp_qr', { qr });
         }
 
         if (connection === 'close') {
             const statusCode = (lastDisconnect?.error as Boom)?.output?.statusCode;
-            const shouldReconnect = statusCode !== DisconnectReason.loggedOut;
+            const shouldReconnect = statusCode !== DisconnectReason.loggedOut && qrCount <= MAX_QR_RETRIES;
             
             console.log(`[${userId}] Connection closed. Status: ${statusCode}. Reconnecting: ${shouldReconnect}`);
             
             delete activeSockets[userId];
             
             if (!shouldReconnect) {
-                console.log(`[${userId}] Logged out. Deleting session.`);
-                if (fs.existsSync(sessionPath)) {
-                    fs.rmSync(sessionPath, { recursive: true, force: true });
-                }
-                await adminDb.collection('users').doc(userId).update({ whatsappConnected: false });
-                io.to(`user_${userId}`).emit('whatsapp_disconnected');
-            } else {
-                // If timed out or just closed, don't auto-reconnect if it's the QR stage
-                // but for existing connections, we should try once.
-                const wasConnected = (await adminDb.collection('users').doc(userId).get()).data()?.whatsappConnected;
-                if (wasConnected) {
-                    setTimeout(() => initializeWhatsApp(userId, io), 3000);
+                if (statusCode === DisconnectReason.loggedOut) {
+                    console.log(`[${userId}] Logged out. Deleting session.`);
+                    if (fs.existsSync(sessionPath)) {
+                        fs.rmSync(sessionPath, { recursive: true, force: true });
+                    }
+                    await adminDb.collection('users').doc(userId).update({ whatsappConnected: false });
+                    io.to(`user_${userId}`).emit('whatsapp_disconnected');
                 } else {
+                    console.log(`[${userId}] Session expired or timed out.`);
                     io.to(`user_${userId}`).emit('whatsapp_qr_expired');
                 }
+            } else {
+                // If it's a normal network drop, try to reconnect
+                setTimeout(() => initializeWhatsApp(userId, io), 3000);
             }
         } else if (connection === 'open') {
             console.log(`[${userId}] Connected! Session established.`);
+            qrCount = 0; // Reset count on success
             await adminDb.collection('users').doc(userId).update({ whatsappConnected: true });
             io.to(`user_${userId}`).emit('whatsapp_ready', { userId });
         }

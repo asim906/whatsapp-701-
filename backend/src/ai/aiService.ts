@@ -54,23 +54,22 @@ export const generateAIResponse = async (
                     console.log(`[${userId}] 🎤 VOICE MODE: Analyzing language for voice response...`);
                     let audioBuffer: Buffer | null = null;
                     let targetText = finalText;
-                    let targetLang = 'en'; // Default to English TTS for Roman Urdu/English
 
-                    const isUrduInput = settings.language === 'urdu' || /[\u0600-\u06FF\u0900-\u097F]/.test(finalText);
+                    // STRICT RULE: If response has Urdu/Hindi script, and we need VOICE -> MUST TRANSLITERATE
+                    const hasUrduScript = /[\u0600-\u06FF\u0900-\u097F]/.test(finalText);
 
-                    if (isUrduInput) {
-                        console.log(`[${userId}] 🔄 URDU VOICE detected. Forcing Roman Urdu transliteration...`);
+                    if (hasUrduScript) {
+                        console.log(`[${userId}] 🔄 URDU/HINDI Script detected in voice mode. Forcing Roman Urdu...`);
                         try {
                             const apiKey = settings.openAiKey || settings.openRouterKey || process.env.GROQ_API_KEY || process.env.OPENAI_API_KEY;
                             
-                            // Mandatory Transliteration for Urdu Voice
                             if (apiKey) {
-                                console.log(`[${userId}] 🤖 Transliterating to Roman Urdu...`);
+                                console.log(`[${userId}] 🤖 Transliterating...`);
                                 if (apiKey.startsWith('gsk_')) {
                                     const { default: Groq } = await import('groq-sdk');
                                     const groq = new Groq({ apiKey });
                                     const response = await groq.chat.completions.create({
-                                        messages: [{ role: 'user', content: 'Transliterate the following Urdu text into Roman English (Latin alphabet). Return ONLY the pure transliterated string without any quotes or explanations:\n\n' + finalText }],
+                                        messages: [{ role: 'user', content: 'Transliterate the following Urdu/Hindi text into Roman Urdu (Latin alphabet). Return ONLY the pure transliterated string without any quotes or explanations. Example: "اسلام علیکم" -> "Assalam o Alaikum":\n\n' + finalText }],
                                         model: 'llama3-8b-8192'
                                     });
                                     targetText = response.choices[0]?.message?.content?.trim() || finalText;
@@ -78,7 +77,7 @@ export const generateAIResponse = async (
                                     const { default: OpenAI } = await import('openai');
                                     const openai = new OpenAI({ apiKey });
                                     const response = await openai.chat.completions.create({
-                                        messages: [{ role: 'user', content: 'Transliterate the following Urdu text into Roman English (Latin alphabet). Return ONLY the pure transliterated string without any quotes or explanations:\n\n' + finalText }],
+                                        messages: [{ role: 'user', content: 'Transliterate the following Urdu/Hindi text into Roman Urdu (Latin alphabet). Return ONLY the pure transliterated string without any quotes or explanations. Example: "اسلام علیکم" -> "Assalam o Alaikum":\n\n' + finalText }],
                                         model: 'gpt-4o-mini'
                                     });
                                     targetText = response.choices[0]?.message?.content?.trim() || finalText;
@@ -87,27 +86,30 @@ export const generateAIResponse = async (
                             }
                         } catch (err: any) {
                             console.error(`[${userId}] ❌ Transliteration failed:`, err.message);
+                            // If transliteration fails, targetText stays as finalText (Urdu script)
                         }
                     }
 
-                    // Synthesize using the target text (either English or Roman Urdu)
+                    // Attempt TTS
                     try {
+                        // We use 'en' engine for Roman Urdu as it's the most stable
                         audioBuffer = await VoiceService.textToSpeech(targetText, 'en', settings);
                     } catch (voiceErr: any) {
                         console.error(`[${userId}] ❌ TTS failed:`, voiceErr.message);
                     }
 
-                    if (audioBuffer) {
+                    // FINAL VALIDATION: Check if buffer is valid and has content
+                    if (audioBuffer && audioBuffer.byteLength > 2000) {
                         await sock.sendMessage(remoteJid, { audio: audioBuffer, ptt: true, mimetype: 'audio/ogg; codecs=opus' });
                         mediaData = `data:audio/ogg; codecs=opus;base64,${audioBuffer.toString('base64')}`;
                         console.log(`[${userId}] ✅ Voice response sent to WhatsApp.`);
                     } else {
-                        console.log(`[${userId}] ⚠️ Falling back to text due to TTS failure.`);
+                        console.log(`[${userId}] ⚠️ Voice generation failed or produced empty audio. Falling back to TEXT.`);
                         await sock.sendMessage(remoteJid, { text: finalText });
-                        isCallMode = false;
+                        isCallMode = false; // For the frontend payload
                     }
                 } else {
-                    // TEXT MODE: Send as is (Urdu script for Urdu, English for English)
+                    // TEXT MODE: Reply in original script
                     await sock.sendMessage(remoteJid, { text: finalText });
                 }
             await AnalyticsService.trackEvent(userId, 'aiResponses');
