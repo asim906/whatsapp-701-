@@ -20,9 +20,29 @@ export default function DashboardPage() {
   const [connecting, setConnecting] = useState(false);
   const [qrExpired, setQrExpired] = useState(false);
   const [localDisconnect, setLocalDisconnect] = useState(false);
+  const [statusChecked, setStatusChecked] = useState(false);
   
+  const fetchStatus = async () => {
+    if (!user) return;
+    try {
+      const res = await fetch(`${BACKEND_URL}/api/whatsapp/status/${user.uid}`);
+      if (res.ok) {
+        const data = await res.json();
+        setUserData((prev: any) => ({ ...prev, whatsappConnected: data.connected }));
+        if (data.connected) setLocalDisconnect(false);
+      }
+    } catch (err) {
+      console.warn("Could not fetch connection status:", err);
+    } finally {
+      setStatusChecked(true);
+    }
+  };
+
   useEffect(() => {
     if (!user) return;
+
+    // Initial fetch on mount
+    fetchStatus();
 
     const socket = useChatStore.getState().socket;
     if (socket) {
@@ -38,6 +58,12 @@ export default function DashboardPage() {
         setQrCode("");
         setQrExpired(false);
         setLocalDisconnect(false); // Definitely connected
+        fetchStatus(); // Re-verify
+      });
+
+      socket.on('whatsapp_qr_expired', () => {
+        setQrExpired(true);
+        setConnecting(false);
       });
 
       socket.on('whatsapp_status_update', (data: { status: string }) => {
@@ -138,7 +164,12 @@ export default function DashboardPage() {
     }
   };
 
-  if (loading) return <div className="text-foreground/50">Loading Dashboard...</div>;
+  if (loading || !statusChecked) return (
+    <div className="flex-1 flex flex-col items-center justify-center gap-4">
+      <div className="w-12 h-12 border-4 border-primary/30 border-t-primary rounded-full animate-spin"></div>
+      <p className="text-foreground/40 font-medium animate-pulse text-sm tracking-wider uppercase">Authenticating & Verifying Session...</p>
+    </div>
+  );
 
   const isConnected = userData?.whatsappConnected === true && !localDisconnect;
   const stats = realStats;
@@ -216,7 +247,17 @@ export default function DashboardPage() {
             </div>
 
             <div className="glass-panel rounded-2xl p-6 border border-white/5 flex flex-col h-96">
-              <h2 className="text-xl font-semibold text-white mb-6">Device Connection</h2>
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-xl font-semibold text-white">Device Connection</h2>
+                <button 
+                  onClick={fetchStatus}
+                  className="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-foreground/60 transition-colors"
+                  title="Refresh Connection Status"
+                >
+                  <ArrowUpRight className="w-4 h-4 rotate-45" />
+                </button>
+              </div>
+              
               <div className="flex-1 flex flex-col gap-4">
                 <div className="flex items-center gap-4 p-4 rounded-xl bg-green-500/10 border border-green-500/20">
                   <div className="w-12 h-12 rounded-full bg-green-500/20 flex items-center justify-center">
@@ -226,6 +267,27 @@ export default function DashboardPage() {
                     <p className="text-sm font-semibold text-white">WhatsApp API</p>
                     <p className="text-xs text-green-400 mt-0.5">Online & Active 24/7</p>
                   </div>
+                </div>
+
+                <div className="mt-auto pt-4 border-t border-white/5">
+                   <button 
+                    onClick={async () => {
+                      if (!confirm("Are you sure you want to disconnect WhatsApp? You will need to scan the QR code again to reconnect.")) return;
+                      try {
+                        await fetch(`${BACKEND_URL}/api/whatsapp/logout`, {
+                          method: "POST",
+                          headers: { "Content-Type": "application/json" },
+                          body: JSON.stringify({ userId: user?.uid }),
+                        });
+                        setLocalDisconnect(true);
+                      } catch (err) {
+                        console.error("Logout failed:", err);
+                      }
+                    }}
+                    className="w-full py-3 rounded-xl bg-red-500/10 text-red-400 hover:bg-red-500/20 font-medium transition-all"
+                  >
+                    Disconnect WhatsApp
+                  </button>
                 </div>
               </div>
             </div>

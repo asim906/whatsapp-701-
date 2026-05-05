@@ -50,12 +50,14 @@ export const generateAIResponse = async (
         if (finalText) {
             console.log(`[${userId}] ✅ AI response generated: "${finalText.substring(0, 50)}..."`);
             
-            // --- MANDATORY ROMAN URDU ENFORCEMENT ---
-            const hasUrduScript = /[\u0600-\u06FF\u0900-\u097F]/.test(finalText);
             let responseText = finalText;
 
-            if (hasUrduScript) {
-                console.log(`[${userId}] 🔄 URDU/HINDI Script detected. Forcing Roman Urdu conversion...`);
+            // --- SELECTIVE ROMAN URDU ENFORCEMENT ---
+            // Rule: Only force Roman Urdu if it's a VOICE response (isCallMode)
+            const hasUrduScript = /[\u0600-\u06FF\u0900-\u097F]/.test(finalText);
+
+            if (isCallMode && hasUrduScript) {
+                console.log(`[${userId}] 🔄 URDU/HINDI Script detected in VOICE MODE. Forcing Roman Urdu conversion...`);
                 try {
                     const apiKey = settings.openAiKey || settings.openRouterKey || process.env.GROQ_API_KEY || process.env.OPENAI_API_KEY;
                     if (apiKey) {
@@ -86,7 +88,7 @@ export const generateAIResponse = async (
                 }
             }
 
-            // Now delivery using responseText (which is guaranteed or tried-best to be Roman)
+            // Now delivery
             if (isCallMode) {
                 console.log(`[${userId}] 🎤 Delivering VOICE note...`);
                 let audioBuffer: Buffer | null = null;
@@ -105,7 +107,7 @@ export const generateAIResponse = async (
                     isCallMode = false;
                 }
             } else {
-                // TEXT MODE: Guaranteed Roman Urdu
+                // TEXT MODE: Deliver original script (could be Urdu or English)
                 await sock.sendMessage(remoteJid, { text: responseText });
             }
             
@@ -199,12 +201,12 @@ ${isEcommerceMode ? `
 2. LEAD CAPTURE (CRITICAL): When user provides Name and Phone, append this EXACT tag at the END:
 [LEAD: Name | Email (or Unknown) | Phone | {"requested_service": "...", "preferred_time": "..."}]
 `}
-5. LANGUAGE & BEHAVIOR: Use ONLY Natural Roman Urdu or English.
-**STRICT RULE: NEVER USE URDU SCRIPT (Arabic/Persian characters).**
-Even if the user asks for Urdu script, you must reply in Roman Urdu (Latin alphabet).
+5. LANGUAGE & BEHAVIOR:
+- IF input is TEXT: You may use Urdu script (Arabic/Persian characters) for Urdu or English as appropriate.
+- IF input is VOICE (isCallMode: true): **STRICT RULE: NEVER USE URDU SCRIPT.** You MUST respond using ONLY Roman Urdu (Latin alphabet) or English.
 Example: Instead of "السلام علیکم", write "Assalam o Alaikum".
 6. PROFESSIONALISM: Always remain professional and helpful.
-${isCallMode ? '7. VOICE MODE IS ACTIVE: Speak like a human, limit lists, keep it very short.' : ''}
+${isCallMode ? '7. VOICE MODE IS ACTIVE: SPEAK IN ROMAN URDU ONLY. Speak like a human, limit lists, keep it very short.' : ''}
 `;
 
         // 3. Build Context from history

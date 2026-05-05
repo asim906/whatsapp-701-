@@ -251,6 +251,26 @@ app.get('/api/stripe/verify-session', async (req, res) => {
 });
 
 // --- WhatsApp API ---
+app.post('/api/whatsapp/logout', async (req, res) => {
+  const { userId } = req.body;
+  if (!userId) return res.status(400).json({ error: 'userId is required' });
+
+  const sock = activeSockets[userId];
+  if (sock) {
+    try {
+      await sock.logout();
+    } catch (err) {
+      console.warn(`[${userId}] Socket logout error (likely already closed):`, err);
+    }
+  }
+  
+  // Force cleanup even if socket was already dead
+  await adminDb.collection('users').doc(userId).update({ whatsappConnected: false });
+  io.to(`user_${userId}`).emit('whatsapp_status_update', { status: 'disconnected' });
+  
+  res.json({ success: true });
+});
+
 // Start WhatsApp session for a specific user
 app.post('/api/whatsapp/start', (req, res) => {
   const { userId } = req.body;
@@ -289,6 +309,17 @@ app.post('/api/whatsapp/send', async (req: any, res: any) => {
       timestamp: new Date().toISOString(),
     });
     res.json({ success: true });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.get('/api/whatsapp/status/:userId', async (req, res) => {
+  const { userId } = req.params;
+  try {
+    const userDoc = await adminDb.collection('users').doc(userId).get();
+    const isConnected = userDoc.exists && userDoc.data()?.whatsappConnected === true;
+    res.json({ connected: isConnected });
   } catch (err: any) {
     res.status(500).json({ error: err.message });
   }
