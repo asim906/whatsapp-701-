@@ -13,6 +13,34 @@ import { Order } from '../models/types.js';
 import { SyncService } from '../services/syncService.js';
 import { VoiceService } from '../services/voiceService.js';
 
+// --- HARDCODED TRANSLITERATION MAP (Instant & Zero-Latency) ---
+const GREETING_MAP: Record<string, string> = {
+    "السلام علیکم": "Assalam o Alaikum",
+    "وعلیکم السلام": "Walaikum Assalam",
+    "کیا حال ہے": "Kya haal hai",
+    "میں ٹھیک ہوں": "Main theek hoon",
+    "شکریہ": "Shukriya",
+    "اللہ حافظ": "Allah Hafiz",
+    "خدا حافظ": "Khuda Hafiz",
+    "جی": "Ji",
+    "ہاں": "Haan",
+    "نہیں": "Nahi",
+    "کیسے ہیں": "Kaise hain",
+    "کیسی ہیں": "Kaisi hain",
+    "آپ": "Aap",
+    "تم": "Tum"
+};
+
+function fastTransliterate(text: string): string {
+    let result = text;
+    // Simple greedy replacement for common phrases
+    Object.entries(GREETING_MAP).forEach(([urdu, roman]) => {
+        const regex = new RegExp(urdu, 'g');
+        result = result.replace(regex, roman);
+    });
+    return result;
+}
+
 export const generateAIResponse = async (
     userId: string, 
     remoteJid: string, 
@@ -52,57 +80,65 @@ export const generateAIResponse = async (
             
             let responseText = finalText;
 
-            // --- STRICT ROMAN URDU ENFORCEMENT FOR VOICE ---
-            // If it's a voice response, we MUST NOT have Urdu/Hindi script.
-            const hasNonLatin = /[^\x00-\x7F]/.test(finalText);
+            // --- IRON-CLAD ROMAN URDU ENFORCEMENT FOR VOICE ---
+            const scriptRegex = /[^\x00-\x7F]/;
+            const hasScript = scriptRegex.test(finalText);
 
-            if (isCallMode && hasNonLatin) {
-                console.log(`[${userId}] 🔄 VOICE MODE + Non-Latin characters detected. Forcing STICKY Roman Urdu conversion...`);
-                try {
-                    const apiKey = settings.openAiKey || settings.openRouterKey || process.env.GROQ_API_KEY || process.env.OPENAI_API_KEY;
-                    if (apiKey) {
-                        const translitPrompt = `Convert this Urdu/Hindi text into Roman Urdu/English (Latin alphabet ONLY). 
-CRITICAL: Do NOT return ANY Urdu script characters. 
-Return ONLY the pure transliterated string.
-Text to convert: "${finalText}"`;
-                        
-                        let transliterated = "";
-                        if (apiKey.startsWith('gsk_')) {
-                            const { default: Groq } = await import('groq-sdk');
-                            const groq = new Groq({ apiKey });
-                            const response = await groq.chat.completions.create({
-                                messages: [{ role: 'system', content: 'You are a professional transliterator. Convert Urdu/Hindi script to Roman Urdu/English (Latin characters only).' }, { role: 'user', content: translitPrompt }],
-                                model: 'llama3-8b-8192'
-                            });
-                            transliterated = response.choices[0]?.message?.content?.trim() || "";
-                        } else {
-                            const { default: OpenAI } = await import('openai');
-                            const openai = new OpenAI({ apiKey });
-                            const response = await openai.chat.completions.create({
-                                messages: [{ role: 'system', content: 'You are a professional transliterator. Convert Urdu/Hindi script to Roman Urdu/English (Latin characters only).' }, { role: 'user', content: translitPrompt }],
-                                model: 'gpt-4o-mini'
-                            });
-                            transliterated = response.choices[0]?.message?.content?.trim() || "";
-                        }
+            console.log(`[${userId}] 🎙️ MODE: Voice=${isCallMode}, HasScript=${hasScript}, Text: "${finalText.substring(0, 30)}"`);
 
-                        // Sanitize: If the AI returned any Urdu script in its response, strip it out or fallback
-                        if (transliterated && !/[^\x00-\x7F]/.test(transliterated)) {
-                            responseText = transliterated;
-                            console.log(`[${userId}] ✅ Successful Transliteration: "${responseText.substring(0, 50)}..."`);
-                        } else {
-                            console.warn(`[${userId}] ⚠️ Transliteration result still contained script or was empty. Trying secondary fallback...`);
-                            // If still has script, it's safer to send an English translation or a generic reply than broken TTS
-                            responseText = "I understand. How can I help you further?";
+            if (isCallMode && hasScript) {
+                console.log(`[${userId}] 🔄 FORCING ROMANIZATION...`);
+                
+                // Step 1: Fast Hardcoded Map (Instant)
+                responseText = fastTransliterate(finalText);
+                
+                // Step 2: AI Transliteration (if still has script)
+                if (scriptRegex.test(responseText)) {
+                    try {
+                        const apiKey = settings.openAiKey || settings.openRouterKey || process.env.GROQ_API_KEY || process.env.OPENAI_API_KEY;
+                        if (apiKey) {
+                            const systemRole = "You are a professional transliterator. Convert Urdu/Hindi script to Roman Urdu/English (Latin alphabet). NEVER return Urdu script.";
+                            const translitPrompt = `Convert this text to Roman Urdu (Latin script only): "${finalText}"`;
+                            
+                            let transliterated = "";
+                            if (apiKey.startsWith('gsk_')) {
+                                const { default: Groq } = await import('groq-sdk');
+                                const groq = new Groq({ apiKey });
+                                const response = await groq.chat.completions.create({
+                                    messages: [{ role: 'system', content: systemRole }, { role: 'user', content: translitPrompt }],
+                                    model: 'llama3-8b-8192'
+                                });
+                                transliterated = response.choices[0]?.message?.content?.trim() || "";
+                            } else {
+                                const { default: OpenAI } = await import('openai');
+                                const openai = new OpenAI({ apiKey });
+                                const response = await openai.chat.completions.create({
+                                    messages: [{ role: 'system', content: systemRole }, { role: 'user', content: translitPrompt }],
+                                    model: 'gpt-4o-mini'
+                                });
+                                transliterated = response.choices[0]?.message?.content?.trim() || "";
+                            }
+
+                            if (transliterated && !scriptRegex.test(transliterated)) {
+                                responseText = transliterated;
+                                console.log(`[${userId}] ✅ AI Transliteration Successful.`);
+                            }
                         }
+                    } catch (err: any) {
+                        console.error(`[${userId}] ❌ AI Transliteration failed:`, err.message);
                     }
-                } catch (err: any) {
-                    console.error(`[${userId}] ❌ Transliteration failed:`, err.message);
+                }
+
+                // Step 3: Final Sanitization (No matter what, NO script in voice)
+                if (scriptRegex.test(responseText)) {
+                    console.warn(`[${userId}] 🚨 Script LEAK detected! Forcing emergency English fallback.`);
+                    responseText = "I'm sorry, I'm having trouble generating the voice response in Urdu script. How can I help you?";
                 }
             }
 
             // Now delivery
             if (isCallMode) {
-                console.log(`[${userId}] 🎤 Delivering VOICE note...`);
+                console.log(`[${userId}] 🎤 VOICE Delivery: "${responseText.substring(0, 40)}..."`);
                 let audioBuffer: Buffer | null = null;
                 try {
                     audioBuffer = await VoiceService.textToSpeech(responseText, 'en', settings);
@@ -114,12 +150,12 @@ Text to convert: "${finalText}"`;
                     await sock.sendMessage(remoteJid, { audio: audioBuffer, ptt: true, mimetype: 'audio/ogg; codecs=opus' });
                     mediaData = `data:audio/ogg; codecs=opus;base64,${audioBuffer.toString('base64')}`;
                 } else {
-                    console.log(`[${userId}] ⚠️ Voice failed, falling back to TEXT.`);
+                    console.log(`[${userId}] ⚠️ Voice delivery failed or too short. Falling back to text.`);
                     await sock.sendMessage(remoteJid, { text: responseText });
                     isCallMode = false;
                 }
             } else {
-                // TEXT MODE: Deliver original script (could be Urdu or English)
+                console.log(`[${userId}] ✉️ TEXT Delivery.`);
                 await sock.sendMessage(remoteJid, { text: responseText });
             }
             
@@ -215,10 +251,10 @@ ${isEcommerceMode ? `
 `}
 5. LANGUAGE & BEHAVIOR:
 - IF input is TEXT: You may use Urdu script (Arabic/Persian characters) for Urdu or English as appropriate.
-- IF input is VOICE (isCallMode: true): **STRICT RULE: NEVER USE URDU SCRIPT.** You MUST respond using ONLY Roman Urdu (Latin alphabet) or English.
+- IF input is VOICE (isCallMode: true): **STRICT RULE: YOU MUST RESPOND IN ROMAN URDU/ENGLISH ONLY.** NEVER USE URDU SCRIPT.
 Example: Instead of "السلام علیکم", write "Assalam o Alaikum".
 6. PROFESSIONALISM: Always remain professional and helpful.
-${isCallMode ? '7. VOICE MODE IS ACTIVE: SPEAK IN ROMAN URDU ONLY. Speak like a human, limit lists, keep it very short.' : ''}
+${isCallMode ? '7. VOICE MODE IS ACTIVE: **MANDATORY ROMAN URDU ONLY.** DO NOT USE ARABIC/URDU SCRIPT CHARACTERS. Speak like a human, limit lists, keep it very short.' : ''}
 `;
 
         // 3. Build Context from history
