@@ -52,36 +52,48 @@ export const generateAIResponse = async (
             
             let responseText = finalText;
 
-            // --- SELECTIVE ROMAN URDU ENFORCEMENT ---
-            // Rule: Only force Roman Urdu if it's a VOICE response (isCallMode)
-            const hasUrduScript = /[\u0600-\u06FF\u0900-\u097F]/.test(finalText);
+            // --- STRICT ROMAN URDU ENFORCEMENT FOR VOICE ---
+            // If it's a voice response, we MUST NOT have Urdu/Hindi script.
+            const hasNonLatin = /[^\x00-\x7F]/.test(finalText);
 
-            if (isCallMode && hasUrduScript) {
-                console.log(`[${userId}] 🔄 URDU/HINDI Script detected in VOICE MODE. Forcing Roman Urdu conversion...`);
+            if (isCallMode && hasNonLatin) {
+                console.log(`[${userId}] 🔄 VOICE MODE + Non-Latin characters detected. Forcing STICKY Roman Urdu conversion...`);
                 try {
                     const apiKey = settings.openAiKey || settings.openRouterKey || process.env.GROQ_API_KEY || process.env.OPENAI_API_KEY;
                     if (apiKey) {
-                        console.log(`[${userId}] 🤖 Transliterating...`);
-                        const translitPrompt = 'Transliterate the following Urdu/Hindi text into Roman Urdu (Latin alphabet). Return ONLY the pure transliterated string without any quotes or explanations. Example: "السلام علیکم" -> "Assalam o Alaikum":\n\n' + finalText;
+                        const translitPrompt = `Convert this Urdu/Hindi text into Roman Urdu/English (Latin alphabet ONLY). 
+CRITICAL: Do NOT return ANY Urdu script characters. 
+Return ONLY the pure transliterated string.
+Text to convert: "${finalText}"`;
                         
+                        let transliterated = "";
                         if (apiKey.startsWith('gsk_')) {
                             const { default: Groq } = await import('groq-sdk');
                             const groq = new Groq({ apiKey });
                             const response = await groq.chat.completions.create({
-                                messages: [{ role: 'user', content: translitPrompt }],
+                                messages: [{ role: 'system', content: 'You are a professional transliterator. Convert Urdu/Hindi script to Roman Urdu/English (Latin characters only).' }, { role: 'user', content: translitPrompt }],
                                 model: 'llama3-8b-8192'
                             });
-                            responseText = response.choices[0]?.message?.content?.trim() || finalText;
+                            transliterated = response.choices[0]?.message?.content?.trim() || "";
                         } else {
                             const { default: OpenAI } = await import('openai');
                             const openai = new OpenAI({ apiKey });
                             const response = await openai.chat.completions.create({
-                                messages: [{ role: 'user', content: translitPrompt }],
+                                messages: [{ role: 'system', content: 'You are a professional transliterator. Convert Urdu/Hindi script to Roman Urdu/English (Latin characters only).' }, { role: 'user', content: translitPrompt }],
                                 model: 'gpt-4o-mini'
                             });
-                            responseText = response.choices[0]?.message?.content?.trim() || finalText;
+                            transliterated = response.choices[0]?.message?.content?.trim() || "";
                         }
-                        console.log(`[${userId}] 🗣️ Romanized: "${responseText.substring(0, 50)}..."`);
+
+                        // Sanitize: If the AI returned any Urdu script in its response, strip it out or fallback
+                        if (transliterated && !/[^\x00-\x7F]/.test(transliterated)) {
+                            responseText = transliterated;
+                            console.log(`[${userId}] ✅ Successful Transliteration: "${responseText.substring(0, 50)}..."`);
+                        } else {
+                            console.warn(`[${userId}] ⚠️ Transliteration result still contained script or was empty. Trying secondary fallback...`);
+                            // If still has script, it's safer to send an English translation or a generic reply than broken TTS
+                            responseText = "I understand. How can I help you further?";
+                        }
                     }
                 } catch (err: any) {
                     console.error(`[${userId}] ❌ Transliteration failed:`, err.message);
@@ -228,7 +240,11 @@ ${isCallMode ? '7. VOICE MODE IS ACTIVE: SPEAK IN ROMAN URDU ONLY. Speak like a 
         // 4. Route to AI provider
         if (settings.provider === 'gemini') {
             const ai = new GoogleGenAI({ apiKey: settings.geminiKey || "" });
-            const prompt = `${fullSystemPrompt}\n\nConversation History:\n${historyText}\nUser: ${incomingText}\nAssistant:`;
+            let finalUserMessage = incomingText;
+            if (isCallMode) {
+                finalUserMessage += "\n\n(REMINDER: Respond in ROMAN URDU/ENGLISH only. NO Urdu script.)";
+            }
+            const prompt = `${fullSystemPrompt}\n\nConversation History:\n${historyText}\nUser: ${finalUserMessage}\nAssistant:`;
             const response = await ai.getGenerativeModel({ model: 'gemini-2.0-flash' }).generateContent(prompt);
             replyText = response.response.text() || "";
 
@@ -245,7 +261,13 @@ ${isCallMode ? '7. VOICE MODE IS ACTIVE: SPEAK IN ROMAN URDU ONLY. Speak like a 
                     messages.push({ role: m.key.fromMe ? "assistant" : "user", content: txt });
                 }
             });
-            messages.push({ role: "user", content: incomingText });
+            
+            // Add a final instruction to the user message to force language rule compliance
+            let finalUserMessage = incomingText;
+            if (isCallMode) {
+                finalUserMessage += "\n\n(REMINDER: Respond in ROMAN URDU/ENGLISH only. NO Urdu script.)";
+            }
+            messages.push({ role: "user", content: finalUserMessage });
 
             const completion = await client.chat.completions.create({
                 model: isRouter ? "openai/gpt-4o-mini" : "gpt-4o-mini",
