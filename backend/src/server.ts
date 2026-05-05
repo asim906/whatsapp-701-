@@ -18,6 +18,7 @@ import { AnalyticsService } from './services/analyticsService.js';
 import { CallController } from './whatsapp/callController.js';
 import { SyncService } from './services/syncService.js';
 import { VoiceSessionManager } from './services/VoiceSessionManager.js';
+import { TTSService } from './services/ttsService.js';
 
 // Explicitly track active users for reliable message delivery
 export const activeUsers = new Map<string, string>(); // userId -> socketId
@@ -248,6 +249,26 @@ app.get('/api/stripe/verify-session', async (req, res) => {
     console.error('Stripe Verify Error:', error);
     res.status(500).json({ error: error.message });
   }
+});
+
+// --- SELF-HOSTED TTS ENDPOINT ---
+app.post('/api/tools/tts', async (req, res) => {
+    try {
+        const { text } = req.body;
+        if (!text) return res.status(400).json({ error: "Text is required" });
+
+        const language = TTSService.detectLanguage(text);
+        const audioBuffer = await TTSService.generateSpeech(text, language);
+        
+        res.json({
+            success: true,
+            language,
+            audioData: `data:audio/ogg;base64,${audioBuffer.toString('base64')}`
+        });
+    } catch (err: any) {
+        console.error("TTS API Error:", err.message);
+        res.status(500).json({ error: err.message });
+    }
 });
 
 // --- WhatsApp API ---

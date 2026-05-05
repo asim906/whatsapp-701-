@@ -12,6 +12,8 @@ import { AnalyticsService } from '../services/analyticsService.js';
 import { Order } from '../models/types.js';
 import { SyncService } from '../services/syncService.js';
 import { VoiceService } from '../services/voiceService.js';
+import fs from 'fs';
+import path from 'path';
 
 // --- HARDCODED TRANSLITERATION MAP (Instant & Zero-Latency) ---
 const GREETING_MAP: Record<string, string> = {
@@ -81,10 +83,14 @@ export const generateAIResponse = async (
             let responseText = finalText;
 
             // --- IRON-CLAD ROMAN URDU ENFORCEMENT FOR VOICE ---
-            const scriptRegex = /[^\x00-\x7F]/;
+            const scriptRegex = /[\u0600-\u06FF\u0900-\u097F]/;
             const hasScript = scriptRegex.test(finalText);
 
-            console.log(`[${userId}] 🎙️ MODE: Voice=${isCallMode}, HasScript=${hasScript}, Text: "${finalText.substring(0, 30)}"`);
+            // LOG TO FILE FOR DEBUGGING
+            const logMsg = `[${new Date().toISOString()}] ${userId} | isCallMode: ${isCallMode} | hasScript: ${hasScript} | Text: ${finalText.substring(0, 50)}\n`;
+            fs.appendFileSync(path.join(process.cwd(), 'debug_lang.log'), logMsg);
+
+            console.log(`[${userId}] 🎙️ MODE: Voice=${isCallMode}, HasScript=${hasScript}`);
 
             if (isCallMode && hasScript) {
                 console.log(`[${userId}] 🔄 FORCING ROMANIZATION...`);
@@ -97,7 +103,7 @@ export const generateAIResponse = async (
                     try {
                         const apiKey = settings.openAiKey || settings.openRouterKey || process.env.GROQ_API_KEY || process.env.OPENAI_API_KEY;
                         if (apiKey) {
-                            const systemRole = "You are a professional transliterator. Convert Urdu/Hindi script to Roman Urdu/English (Latin alphabet). NEVER return Urdu script.";
+                            const systemRole = "You are a professional transliterator. Convert Urdu/Hindi script to Roman Urdu/English (Latin alphabet ONLY). NEVER return the original script.";
                             const translitPrompt = `Convert this text to Roman Urdu (Latin script only): "${finalText}"`;
                             
                             let transliterated = "";
@@ -201,6 +207,23 @@ export const generateAIResponse = async (
     }
 };
 
+const GLOBAL_PLATFORM_RULES = `
+==================================================
+GLOBAL VOICE/TEXT LANGUAGE RULES (STRICT)
+==================================================
+1. VOICE INPUT (isCallMode: true):
+   - Urdu Voice -> Reply in Roman Urdu / Roman English (Latin script only).
+   - Hindi Voice -> Reply in Roman Hindi / Roman English (Latin script only).
+   - English Voice -> Reply in English.
+   **STRICT OVERRIDE:** NEVER use Urdu/Hindi script for voice responses, even if asked.
+
+2. TEXT INPUT (isCallMode: false):
+   - Urdu Text -> Reply in Urdu Script.
+   - Hindi Text -> Reply in Hindi Script.
+   - English Text -> Reply in English.
+==================================================
+`;
+
 export const processAIEngine = async (
     userId: string, 
     remoteJid: string, 
@@ -249,12 +272,8 @@ ${isEcommerceMode ? `
 2. LEAD CAPTURE (CRITICAL): When user provides Name and Phone, append this EXACT tag at the END:
 [LEAD: Name | Email (or Unknown) | Phone | {"requested_service": "...", "preferred_time": "..."}]
 `}
-5. LANGUAGE & BEHAVIOR:
-- IF input is TEXT: You may use Urdu script (Arabic/Persian characters) for Urdu or English as appropriate.
-- IF input is VOICE (isCallMode: true): **STRICT RULE: YOU MUST RESPOND IN ROMAN URDU/ENGLISH ONLY.** NEVER USE URDU SCRIPT.
-Example: Instead of "السلام علیکم", write "Assalam o Alaikum".
 6. PROFESSIONALISM: Always remain professional and helpful.
-${isCallMode ? '7. VOICE MODE IS ACTIVE: **MANDATORY ROMAN URDU ONLY.** DO NOT USE ARABIC/URDU SCRIPT CHARACTERS. Speak like a human, limit lists, keep it very short.' : ''}
+${isCallMode ? '7. VOICE MODE IS ACTIVE: SPEAK IN ROMAN URDU ONLY. Keep it very short and conversational.' : ''}
 `;
 
         // 3. Build Context from history
@@ -268,7 +287,7 @@ ${isCallMode ? '7. VOICE MODE IS ACTIVE: **MANDATORY ROMAN URDU ONLY.** DO NOT U
             }
         });
 
-        const fullSystemPrompt = (settings.systemPrompt || 'You are a helpful WhatsApp sales assistant.') + catalogContext + smartRules;
+        const fullSystemPrompt = GLOBAL_PLATFORM_RULES + (settings.systemPrompt || 'You are a helpful WhatsApp sales assistant.') + catalogContext + smartRules;
         let replyText = "";
 
         console.log(`[${userId}] AI processing message: "${incomingText}"`);

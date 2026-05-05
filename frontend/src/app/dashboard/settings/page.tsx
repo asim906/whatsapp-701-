@@ -166,6 +166,33 @@ export default function SettingsPage() {
           </div>
 
           <div className="space-y-6">
+            {/* Global Platform Rules Info Box */}
+            <div className="bg-primary/5 border border-primary/10 rounded-2xl p-5 space-y-4">
+              <div className="flex items-center justify-between mb-1">
+                <span className="text-[10px] text-primary font-bold uppercase tracking-widest flex items-center gap-2">
+                  <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+                  Global Platform Rules
+                </span>
+                <span className="text-[10px] bg-primary/20 text-primary px-2 py-0.5 rounded-full border border-primary/30 uppercase font-bold tracking-tighter">
+                  Core Brain Logic
+                </span>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div className="space-y-1">
+                  <p className="text-[10px] text-foreground/40 uppercase font-bold">Voice Responses</p>
+                  <p className="text-xs text-foreground/70 leading-relaxed italic">
+                    Urdu/Hindi voice inputs always trigger **Roman Urdu/English** replies to ensure maximum audio quality.
+                  </p>
+                </div>
+                <div className="space-y-1 sm:border-l border-white/5 sm:pl-6">
+                  <p className="text-[10px] text-foreground/40 uppercase font-bold">Text Responses</p>
+                  <p className="text-xs text-foreground/70 leading-relaxed italic">
+                    Urdu/Hindi text inputs preserve **Native Script** for a natural and readable chat experience.
+                  </p>
+                </div>
+              </div>
+            </div>
+
             <div>
               <label className="block text-sm font-medium text-foreground/80 mb-2">Welcome Message</label>
               <textarea 
