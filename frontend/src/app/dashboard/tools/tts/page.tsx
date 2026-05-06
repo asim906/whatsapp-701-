@@ -1,9 +1,5 @@
 'use client';
 import React, { useState } from 'react';
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Mic, Play, Download, Languages, Loader2 } from 'lucide-react';
 
 export default function TTSPage() {
@@ -45,71 +41,75 @@ export default function TTSPage() {
                 </div>
             </div>
 
-            <Card className="bg-gray-900/50 border-gray-800 backdrop-blur-xl">
-                <CardHeader>
-                    <CardTitle className="text-lg flex items-center gap-2">
+            {/* Main Synthesis Card */}
+            <div className="bg-gray-900/50 border border-gray-800 backdrop-blur-xl rounded-2xl overflow-hidden">
+                <div className="p-6 border-b border-gray-800">
+                    <h2 className="text-lg font-semibold text-white flex items-center gap-2">
                         <Languages className="w-5 h-5 text-purple-400" />
                         Speech Synthesis
-                    </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
+                    </h2>
+                </div>
+                <div className="p-6 space-y-4">
                     <div className="space-y-2">
-                        <Label className="text-gray-400">Input Text (Urdu, Hindi, or English)</Label>
-                        <Input 
+                        <label className="text-sm font-medium text-gray-400">Input Text (Urdu, Hindi, or English)</label>
+                        <input 
                             value={text}
                             onChange={(e) => setText(e.target.value)}
                             placeholder="Type something in Urdu or English..."
-                            className="bg-gray-800/50 border-gray-700 text-white h-12"
+                            className="w-full bg-gray-800/50 border border-gray-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50 transition-all h-12"
                         />
                     </div>
 
                     <div className="flex items-center justify-between pt-2">
                         {detectedLang && (
                             <div className="flex items-center gap-2 px-3 py-1 bg-purple-500/10 border border-purple-500/20 rounded-full">
-                                <span className="text-xs font-medium text-purple-400 uppercase">
+                                <span className="text-[10px] font-bold text-purple-400 uppercase tracking-wider">
                                     Detected: {detectedLang}
                                 </span>
                             </div>
                         )}
-                        <Button 
+                        <button 
                             onClick={handleGenerate} 
                             disabled={isLoading || !text}
-                            className="bg-purple-600 hover:bg-purple-700 text-white gap-2 ml-auto"
+                            className="bg-purple-600 hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed text-white px-6 py-2 rounded-xl font-semibold flex items-center gap-2 transition-all ml-auto"
                         >
                             {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Play className="w-4 h-4" />}
                             Generate Speech
-                        </Button>
+                        </button>
                     </div>
 
                     {audioUrl && (
-                        <div className="mt-6 p-4 bg-black/40 rounded-xl border border-gray-800 space-y-4 animate-in fade-in slide-in-from-bottom-2">
-                            <audio src={audioUrl} controls className="w-full h-10 filter invert" />
+                        <div className="mt-6 p-4 bg-black/40 rounded-xl border border-gray-800 space-y-4">
+                            <audio src={audioUrl} controls className="w-full h-10 filter invert opacity-80" />
                             <div className="flex gap-2">
-                                <Button variant="outline" className="flex-1 gap-2 border-gray-700 hover:bg-gray-800" asChild>
-                                    <a href={audioUrl} download="speech.ogg">
-                                        <Download className="w-4 h-4" />
-                                        Download WhatsApp Format
-                                    </a>
-                                </Button>
+                                <a 
+                                    href={audioUrl} 
+                                    download="speech.ogg"
+                                    className="flex-1 bg-white/5 hover:bg-white/10 border border-gray-700 rounded-xl py-3 text-white text-sm font-medium flex items-center justify-center gap-2 transition-all"
+                                >
+                                    <Download className="w-4 h-4" />
+                                    Download WhatsApp Format
+                                </a>
                             </div>
                         </div>
                     )}
-                </CardContent>
-            </Card>
+                </div>
+            </div>
 
+            {/* Status Grid */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <Card className="bg-gray-900/30 border-gray-800 p-4 text-center">
-                    <p className="text-xs text-gray-500 uppercase tracking-widest mb-1">Status</p>
+                <div className="bg-gray-900/30 border border-gray-800 p-5 rounded-2xl text-center space-y-1">
+                    <p className="text-[10px] text-gray-500 uppercase font-bold tracking-widest">Status</p>
                     <p className="text-green-400 font-bold">Self-Hosted (Local)</p>
-                </Card>
-                <Card className="bg-gray-900/30 border-gray-800 p-4 text-center">
-                    <p className="text-xs text-gray-500 uppercase tracking-widest mb-1">Engine</p>
+                </div>
+                <div className="bg-gray-900/30 border border-gray-800 p-5 rounded-2xl text-center space-y-1">
+                    <p className="text-[10px] text-gray-500 uppercase font-bold tracking-widest">Engine</p>
                     <p className="text-white font-bold">Neural MMS/Piper</p>
-                </Card>
-                <Card className="bg-gray-900/30 border-gray-800 p-4 text-center">
-                    <p className="text-xs text-gray-500 uppercase tracking-widest mb-1">Cache</p>
+                </div>
+                <div className="bg-gray-900/30 border border-gray-800 p-5 rounded-2xl text-center space-y-1">
+                    <p className="text-[10px] text-gray-500 uppercase font-bold tracking-widest">Cache</p>
                     <p className="text-white font-bold">Enabled</p>
-                </Card>
+                </div>
             </div>
         </div>
     );
