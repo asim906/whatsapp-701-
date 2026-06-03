@@ -12,6 +12,9 @@
   "author": "",
   "license": "ISC",
   "description": "",
+  "engines": {
+    "node": ">=20.0.0"
+  },
   "dependencies": {
     "@google/genai": "^1.50.1",
     "@whiskeysockets/baileys": "^7.0.0-rc.9",
@@ -45,4 +48,5 @@
     "nodemon": "^3.1.14",
     "ts-node": "^10.9.2"
   }
+}
 }
